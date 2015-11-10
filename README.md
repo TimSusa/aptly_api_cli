@@ -119,73 +119,100 @@ Delete a file in upload directory
 --file_delete=UPLOAD_DIR FILE
 ```
 
+## Snapshot API
+Snapshot management APIs.
+
+Snapshot is a immutable package reference list taken from local repository, mirror or result of other snapshot processing.
+
+
 ### Create snapshot from local repo
+Create snapshot from local repo by giving the snapshot and repo name as parameter. A description is optional.
 ```
 --snapshot_create_from_local_repo=SNAPSHOT_NAME REPO_NAME [DESCRIPTION]
 ```
 
 ### Create snapshot by package references
+Create snapshot by package references. The snapshot name, a comma separated list of snapshots and package references should be given as parameter. A description is optional.
 ```
 --snapshot_create_by_pack_refs=SNAPSHOT_NAME SOURCE_SNAPSHOTS PACKAGE_REF_LIST [DESCRIPTION]
 ```
 
-### Show basic information about snapshot
+### Snapshot show
+Show basic information about snapshot
 ```
 --snapshot_show=SNAPSHOT_NAME
 ```
 
-### Show all packages the snapshot is containing or optionally search for one.
+### Snapshot show packages 
+Show all packages the snapshot is containing or optionally search for one.
 ```
 --snapshot_show_packages=SNAPSHOT_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
 ```
 
-### Rename snapshot and optionally change description
+### Update snapshot 
+Rename snapshot and optionally change description
 ```
 --snapshot_update=OLD_SNAPSHOT_NAME NEW_SNAPSHOT_NAME [DESCRIPTION]
 ```
 
-### Lists all available snapshots
+### Snapshot list
+Lists all available snapshots
 ```
 --snapshot_list
 ```
 
-### List differences of two snapshots
+### Snapshot diff
+List differences of two snapshots
 ```
 --snapshot_diff=LEFT_SNAPSHOT_NAME RIGHT_SNAPSHOT_NAME
 ```
-### Delete snapshot by name. Optionally force deletion.
+### Snapshot delete
+Delete snapshot by name. Optionally force deletion.
 ```
 --snapshot_delete=SNAPSHOT_NAME [FORCE_DELETION]
 ```
 
-### List all available repositories to publish to
+## Publish API
+Manages published repositories.
+
+### Publish list
+List all available repositories to publish to
 ```
 --publish_list
 ```
 
-### Publish snapshot or repository to storage
+### Publish 
+Publish snapshot or repository to storage
 ```
 --publish=PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION_LIST [COMPONENT] [LABEL] [ORIGIN] [FORCE_OVERWRITE] [ARCHITECTURES_LIST]
 ```
 
-### Drop published repo content
+### Publish drop
+Drop published repo content
 ```
 --publish_drop=PREFIX DISTRIBUTION [FORCE_REMOVAL]
 ```
 
 
-### Switching snapshots to published repo with minimal server down time.
+### Publish switch
+Switching snapshots to published repo with minimal server down time.
+
 ```
 --publish_switch=PREFIX SOURCES_LIST DISTRIBUTION [COMPONENT] [FORCE_OVERWRITE]
 ```
 
+## Misc API
 
 ### Returns aptly version
 ```
 --get_version
 ```
 
-### Show packages by key
+## Package API
+APIs related to packages on their own.
+
+### Package show
+Show packages by key
 ```
 --package_show_by_key=PACKAGE_KEY
 ```
