@@ -17,14 +17,17 @@ snapshots or packages, etc. pp
 
 ## Help
 Show this help message and exit
+```
 -h, --help
-
+```
 ## Local Repos Api
 Local repositories management via REST API.
 
 ### List 
 List all local repos
+```
 --repo_list
+```
 
 ### Create
 Create empty local repository with specified parameters. COMMENT,  DISTRIBUTION (e.g.: precise) and COMPONENT (e.g.: main) are optional.
