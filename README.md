@@ -20,7 +20,7 @@ Show this help message and exit
 ```
 -h, --help
 ```
-## Local Repos Api
+## Local Repos API
 Local repositories management via REST API.
 
 ### List 
@@ -30,21 +30,21 @@ List all local repos
 ```
 
 ### Create
-Create empty local repository with specified parameters. COMMENT,  DISTRIBUTION (e.g.: precise) and COMPONENT (e.g.: main) are optional.
+Create empty local repository with specified parameters. REPO_NAME is the name of the repository to create. COMMENT,  DISTRIBUTION (e.g.: precise) and COMPONENT (e.g.: main) are optional.
 
 ```
 --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
 ```
 
 ### Show
-Show basic information about a local repository.
+Show basic information about a local repository. REPO_NAME is the name of the repository.
 
 ```
 --repo_show=REPO_NAME
 ```
 
 ### Show Package
-Show all packages from a local repository. PACKAGE_TO_SEARCH (Name of the Package to search for), WITH_DEPS (e.g.: 0 or zero), FORMAT (e.g.: compact or detail) are optional.
+Show all packages of a local repository. REPO_NAME is the name of the repository. PACKAGE_TO_SEARCH (Name of the Package to search for), WITH_DEPS (e.g.: 0 or 1), FORMAT (e.g.: compact or detail) are optional. Please see http://www.aptly.info/doc/api/ for more details.
 
 ```
 --repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
@@ -57,47 +57,68 @@ Edit information of a local repository.
 --repo_edit=REPO_NAME COMMENT DISTRIBUTION COMPONENT
 ```
 
-### Delete repository
+### Delete
+Delete repository.
+
 ```
 --repo_delete=REPO_NAME
 ```
-###  Add packages to local repo by key
+
+### Add Packages
+Add packages to local repo by key
 ```
 --repo_add_packages_by_key=REPO_NAME PACKAGE_REFS
 ```
-###  Delete packages from repository by key
+
+### Delete Packages
+Delete packages from repository by key
 ```
 --repo_delete_packages_by_key=REPO_NAME PACKAGE_REFS
 ```
 
-### Lists all upload-directories
+## File Upload API
+Upload package files temporarily to aptly service. These files could be added to local repositories using local repositories API.
+
+All uploaded files are stored under <rootDir>/upload directory (see configuration). This directory would be created automatically if it doesn’t exist.
+
+Uploaded files are grouped by directories to support concurrent uploads from multiple package sources. Local repos add API can operate on directory (adding all files from directory) or on individual package files. By default, all successfully added package files would be removed.
+
+### List Directories
+Lists all upload-directories.
 ```
 --file_list_dirs
 ```
 
-### Upload file to local upload-directory 
+### Upload files
+Upload file to local upload-directory 
 ```
 --file_upload=UPLOAD_DIR FILE
 ```
 
-### Add package from upload folder to local repo
+### Add Package 
+Add package from upload folder to local repo
 ```
 --repo_add_package_from_upload=REPO_NAME UPLOAD_DIR PACKAGE_NAME
 ```
-### List uploaded files
+
+### List files
+List uploaded files
 ```
 --file_list
 ```
 
-### Delete upload directory
+### Delete directory
+Delete upload directory
 ```
 --file_delete_dir=UPLOAD_DIR
 ```
 
-### Delete a file in upload directory
+### Delete file
+Delete a file in upload directory
 ```
 --file_delete=UPLOAD_DIR FILE
 ```
+
 ### Create snapshot from local repo
 ```
 --snapshot_create_from_local_repo=SNAPSHOT_NAME REPO_NAME [DESCRIPTION]
