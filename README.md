@@ -10,7 +10,7 @@ Why do we need another cli interface?
 
 # Command Line Options
 
-  -h, --help            show this help message and exit
+## -h, --help            show this help message and exit
   --repo_list           List all local repos
   --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
                         Create local repo
