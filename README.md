@@ -1,3 +1,5 @@
+# UNDER CONSTRUCTION!
+
 # aptly-api-cli
 ### Why do we need another aptly cli interface?
 - Because aptly-api-cli has a lot of more features build in.
@@ -14,23 +16,23 @@ snapshots or packages, etc. pp
 # Command Line Options
 
 ## Help
--h, --help
 Show this help message and exit
+-h, --help
 
 ## Local Repos Api
 Local repositories management via REST API.
 
-### --repo_list
-List all local repos
+### List all local repos
+--repo_list
 
-###CREATE
-POST /api/repos
+### Create local repo
+Create empty local repository with specified parameters.  Comment, Distribution (e.g.: precise) and Component (e.g.: main) are optional.
 
-Create empty local repository with specified parameters (see also aptly repo create). --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
-Create local repo
+--repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
 
-###   --repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
-Shows packages from repo
+### Shows packages from repo
+--repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
+
 
 ###  --repo_show=REPO_NAME
 Show basic repo-information
