@@ -17,7 +17,7 @@ snapshots or packages, etc. pp
 
 ## Help
 Show this help message and exit
--h, --help
+$ -h, --help
 
 ## Local Repos Api
 Local repositories management via REST API.
