@@ -27,7 +27,7 @@ List all local repos
 --repo_list
 
 ### Create
-Create empty local repository with specified parameters. [COMMENT],  [DISTRIBUTION]  (e.g.: precise) and [COMPONENT] (e.g.: main) are optional.
+Create empty local repository with specified parameters. COMMENT,  DISTRIBUTION (e.g.: precise) and COMPONENT (e.g.: main) are optional.
 
 --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
 
@@ -37,7 +37,7 @@ Show basic information about a local repository.
 --repo_show=REPO_NAME
 
 ### Show Package
-Show all packages from a local repository. [PACKAGE_TO_SEARCH] (Name of the Package to search for), [WITH_DEPS] (e.g.: 0 or zero), [FORMAT] (e.g.: compact or detail) are optional.
+Show all packages from a local repository. PACKAGE_TO_SEARCH (Name of the Package to search for), WITH_DEPS (e.g.: 0 or zero), FORMAT (e.g.: compact or detail) are optional.
 
 --repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
 
