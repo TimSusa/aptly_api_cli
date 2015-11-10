@@ -13,13 +13,20 @@ snapshots or packages, etc. pp
 
 # Command Line Options
 
-### -h, --help
+## Help
+-h, --help
 Show this help message and exit
+
+## Local Repos Api
+Local repositories management via REST API.
 
 ### --repo_list
 List all local repos
 
-### --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
+###CREATE
+POST /api/repos
+
+Create empty local repository with specified parameters (see also aptly repo create). --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
 Create local repo
 
 ###   --repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
