@@ -1,0 +1,10 @@
+
+include debian/*
+include contrib/*
+include run.py
+include rest-cli.py
+include requirements.txt
+include TODO.md
+include README.md
+
+exclude debian/aptly-api-cli.*

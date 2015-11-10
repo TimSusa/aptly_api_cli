@@ -1,13 +1,15 @@
 # aptly-api-cli
-Why do we need another aptly cli interface?
+### Why do we need another aptly cli interface?
 - Because aptly-api-cli has a lot of more features build in.
+- aptly-api-cli is made accessible to the python community
+
 
 # Description
-Implementation that fullfils the following documentation http://www.aptly.info/doc/api/
+This python command line interface, executes calls to the Aptly server remotely, without blocking the Aptly database.
+All functionality from here http://www.aptly.info/doc/api/ is extended by even more useful features, like clean out last N
+snapshots or packages, etc. pp
 
 # Installation
-
-# Features
 
 # Command Line Options
 
