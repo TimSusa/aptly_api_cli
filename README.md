@@ -22,22 +22,28 @@ Show this help message and exit
 ## Local Repos Api
 Local repositories management via REST API.
 
-### List all local repos
+### List 
+List all local repos
 --repo_list
 
-### Create local repo
-Create empty local repository with specified parameters.  Comment, Distribution (e.g.: precise) and Component (e.g.: main) are optional.
+### Create
+Create empty local repository with specified parameters. [COMMENT],  [DISTRIBUTION]  (e.g.: precise) and [COMPONENT] (e.g.: main) are optional.
 
 --repo_create=REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]
 
-### Shows packages from repo
---repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
+### Show
+Show basic information about a local repository.
 
-
-###  Show basic repo-information
 --repo_show=REPO_NAME
 
-### Edit repo-information  
+### Show Package
+Show all packages from a local repository. [PACKAGE_TO_SEARCH] (Name of the Package to search for), [WITH_DEPS] (e.g.: 0 or zero), [FORMAT] (e.g.: compact or detail) are optional.
+
+--repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
+
+### Edit
+Edit information of a local repository.  
+
 --repo_edit=REPO_NAME COMMENT DISTRIBUTION COMPONENT
 
 
