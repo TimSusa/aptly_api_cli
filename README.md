@@ -17,7 +17,7 @@ snapshots or packages, etc. pp
 
 ## Help
 Show this help message and exit
-$ -h, --help
+-h, --help
 
 ## Local Repos Api
 Local repositories management via REST API.
@@ -34,26 +34,29 @@ Create empty local repository with specified parameters.  Comment, Distribution 
 --repo_show_packages=REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]
 
 
-###  --repo_show=REPO_NAME
-Show basic repo-information
+###  Show basic repo-information
+--repo_show=REPO_NAME
 
-###   --repo_edit=REPO_NAME COMMENT DISTRIBUTION COMPONENT
-Edit repo-information
+### Edit repo-information  
+--repo_edit=REPO_NAME COMMENT DISTRIBUTION COMPONENT
 
-###   --repo_delete=REPO_NAME
-Delete repository
 
-###  --repo_add_packages_by_key=REPO_NAME PACKAGE_REFS
-Add packages to local repo by key
+### Delete repository
+--repo_delete=REPO_NAME
 
-###  --repo_delete_packages_by_key=REPO_NAME PACKAGE_REFS
-Delete packages from repository by key
+###  Add packages to local repo by key
+--repo_add_packages_by_key=REPO_NAME PACKAGE_REFS
 
-### --file_list_dirs
-Lists all upload-directories
+###  Delete packages from repository by key
+--repo_delete_packages_by_key=REPO_NAME PACKAGE_REFS
 
-### --file_upload=UPLOAD_DIR FILE
-Upload file to local upload-directory
+
+### Lists all upload-directories
+--file_list_dirs
+
+
+### Upload file to local upload-directory--file_upload=UPLOAD_DIR FILE
+
 
 ### --repo_add_package_from_upload=REPO_NAME UPLOAD_DIR PACKAGE_NAME
 Add package from upload folder to local repo
