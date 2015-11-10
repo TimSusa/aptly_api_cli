@@ -1054,19 +1054,6 @@ def _get_parser_options():
     return parser
 
 
-# OK    print 'snapshot create from package refs'
-# OK    src_snap_list = []
-# OK    src_snap_list.append('testreposnapshot')
-# OK    src_snap_list.append('testreposnapshot_2')
-
-# OK    pack_ref_list = []
-# OK    pack_ref_list.append('Pamd64 cluster-manager 0.1.44-d9e04f5177d1a0f86e2f642ced693b3dfab5df7a-stable 972566e749ef5e6d')
-# OK    ara.snapshot_create_from_package_refs( 'testreposnapshot_merged', src_snap_list, pack_ref_list)
-
-# NOK   print 'graph'
-# NOK   ara.graph()
-
-
 def main():
     ara = AptlyRestApi()
 
@@ -1156,11 +1143,6 @@ def main():
     if options.snapshot_create_by_pack_refs:
         o = options.snapshot_create_by_pack_refs
         l = o[2].split(', ')
-        # l_new = []
-
-        # for x in l:
-        #     s=x.replace("%20", " ")
-        #     l_new.append(s)
         if len(args) >= 1:
             ara.snapshot_create_from_package_refs(o[0], o[1].split(', '), l, args[0])
         else:

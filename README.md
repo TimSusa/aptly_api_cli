@@ -1,8 +1,9 @@
 # aptly-api-cli
-Why do we need another cli interface?
+Why do we need another aptly cli interface?
 - Because aptly-api-cli has a lot of more features build in.
 
 # Description
+Implementation that fullfils the following documentation http://www.aptly.info/doc/api/
 
 # Installation
 
