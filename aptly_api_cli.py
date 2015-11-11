@@ -3,7 +3,6 @@
 """
 This is the corresponding client
 for the REST API. Call it like:
-
 $ python client.py -h
 """
 

@@ -1,4 +1,4 @@
-PACKAGE (VERSION) UNRELEASED; urgency=low
+aptly-cli (VERSION) UNRELEASED; urgency=low
 
   * Initial release. (Closes: #XXXXXX)
 
