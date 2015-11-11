@@ -9,7 +9,12 @@ This python command line interface, executes calls to the Aptly server remotely,
 All functionality from here http://www.aptly.info/doc/api/ is extended by even more useful features, like clean out last N
 snapshots or packages, etc. pp
 
+You can make either use of the aptly_api_request.py as a starting point for your own application or just use the cli (aptly_api_cli.py)
+bundled with this repository to execute your requests via command line.
+
 # Installation
+
+# Get started
 
 # Command Line Options
 
