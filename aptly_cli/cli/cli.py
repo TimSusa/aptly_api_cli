@@ -18,7 +18,7 @@ def main():
 
 def _get_parser_opts():
     parser = OptionParser()
-    # non argument option
+
     parser.add_option('--repo_list',
                       action='store_true',
                       help='List all local repos')
