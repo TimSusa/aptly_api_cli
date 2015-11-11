@@ -1,2 +1,4 @@
-VER=0.1
+aptly_api_cli (0.1.33-491e3cf937d25a0844fc35efca3cd74654f46727-stable) testing; urgency=low
 
+  [ Jenkins ]
+  * Build #33. Started by user richter.
