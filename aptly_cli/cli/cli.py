@@ -6,6 +6,7 @@ from optparse import OptionParser
 
 from aptly_cli.aptly_api_requests import AptlyApiRequests
 
+
 def main():
     obj = AptlyApiRequests()
     parser = _get_parser_opts()
@@ -16,6 +17,7 @@ def main():
         parser.print_help()
         sys.exit(0)
 
+
 def _get_parser_opts():
     parser = OptionParser()
 
@@ -25,31 +27,38 @@ def _get_parser_opts():
 
     parser.add_option('--repo_create',
                       nargs=1,
-                      help='Create local repo', metavar='REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]')
+                      help='Create local repo',
+                      metavar='REPO_NAME [COMMENT] [DISTRIBUTION] [COMPONENT]')
 
     parser.add_option('--repo_show_packages',
                       nargs=1,
-                      help='Shows packages from repo', metavar='REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]')
+                      help='Shows packages from repo',
+                      metavar='REPO_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]')
 
     parser.add_option('--repo_show',
                       nargs=1,
-                      help='Show basic repo-information', metavar='REPO_NAME')
+                      help='Show basic repo-information',
+                      metavar='REPO_NAME')
 
     parser.add_option('--repo_edit',
                       nargs=1,
-                      help='Edit repo-information', metavar='REPO_NAME COMMENT DISTRIBUTION COMPONENT')
+                      help='Edit repo-information',
+                      metavar='REPO_NAME COMMENT DISTRIBUTION COMPONENT')
 
     parser.add_option('--repo_delete',
                       nargs=1,
-                      help='Delete repository', metavar='REPO_NAME')
+                      help='Delete repository',
+                      metavar='REPO_NAME')
 
     parser.add_option('--repo_add_packages_by_key',
                       nargs=2,
-                      help='Add packages to local repo by key', metavar='REPO_NAME PACKAGE_REFS')
+                      help='Add packages to local repo by key',
+                      metavar='REPO_NAME PACKAGE_REFS')
 
     parser.add_option('--repo_delete_packages_by_key',
                       nargs=2,
-                      help='Delete packages from repository by key', metavar='REPO_NAME PACKAGE_REFS')
+                      help='Delete packages from repository by key',
+                      metavar='REPO_NAME PACKAGE_REFS')
 
     parser.add_option('--file_list_dirs',
                       action='store_true',
@@ -57,11 +66,13 @@ def _get_parser_opts():
 
     parser.add_option('--file_upload',
                       nargs=2,
-                      help='Upload file to local upload-directory', metavar='UPLOAD_DIR FILE')
+                      help='Upload file to local upload-directory',
+                      metavar='UPLOAD_DIR FILE')
 
     parser.add_option('--repo_add_package_from_upload',
                       nargs=3,
-                      help='Add package from upload folder to local repo', metavar='REPO_NAME UPLOAD_DIR PACKAGE_NAME')
+                      help='Add package from upload folder to local repo',
+                      metavar='REPO_NAME UPLOAD_DIR PACKAGE_NAME')
 
     parser.add_option('--file_list',
                       action='store_true',
@@ -69,15 +80,18 @@ def _get_parser_opts():
 
     parser.add_option('--file_delete_dir',
                       nargs=1,
-                      help='Delete upload directory', metavar='UPLOAD_DIR')
+                      help='Delete upload directory',
+                      metavar='UPLOAD_DIR')
 
     parser.add_option('--file_delete',
                       nargs=2,
-                      help='Delete a file in upload directory', metavar='UPLOAD_DIR FILE')
+                      help='Delete a file in upload directory',
+                      metavar='UPLOAD_DIR FILE')
 
     parser.add_option('--snapshot_create_from_local_repo',
                       nargs=2,
-                      help='Create snapshot from local repo', metavar='SNAPSHOT_NAME REPO_NAME [DESCRIPTION]')
+                      help='Create snapshot from local repo',
+                      metavar='SNAPSHOT_NAME REPO_NAME [DESCRIPTION]')
 
     parser.add_option('--snapshot_create_by_pack_refs',
                       nargs=3,
@@ -86,27 +100,33 @@ def _get_parser_opts():
 
     parser.add_option('--snapshot_show',
                       nargs=1,
-                      help='Show basic information about snapshot', metavar='SNAPSHOT_NAME')
+                      help='Show basic information about snapshot',
+                      metavar='SNAPSHOT_NAME')
 
     parser.add_option('--snapshot_show_packages',
                       nargs=1,
-                      help='Show all packages the snapshot is containing or optionally search for one.', metavar='SNAPSHOT_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]')
+                      help='Show all packages the snapshot is containing or optionally search for one.',
+                      metavar='SNAPSHOT_NAME [PACKAGE_TO_SEARCH] [WITH_DEPS] [FORMAT]')
 
     parser.add_option('--snapshot_update',
                       nargs=2,
-                      help='Rename snapshot and optionally change description', metavar='OLD_SNAPSHOT_NAME NEW_SNAPSHOT_NAME [DESCRIPTION]')
+                      help='Rename snapshot and optionally change description',
+                      metavar='OLD_SNAPSHOT_NAME NEW_SNAPSHOT_NAME [DESCRIPTION]')
 
     parser.add_option('--snapshot_list',
                       action='store_true',
-                      help='Lists all available snapshots', metavar='[SORT_BY_NAME_OR_TIME]')
+                      help='Lists all available snapshots',
+                      metavar='[SORT_BY_NAME_OR_TIME]')
 
     parser.add_option('--snapshot_diff',
                       nargs=2,
-                      help='List differences of two snapshots', metavar='LEFT_SNAPSHOT_NAME RIGHT_SNAPSHOT_NAME')
+                      help='List differences of two snapshots',
+                      metavar='LEFT_SNAPSHOT_NAME RIGHT_SNAPSHOT_NAME')
 
     parser.add_option('--snapshot_delete',
                       nargs=1,
-                      help='Delete snapshot by name. Optionally force deletion.', metavar='SNAPSHOT_NAME [FORCE_DELETION]')
+                      help='Delete snapshot by name. Optionally force deletion.',
+                      metavar='SNAPSHOT_NAME [FORCE_DELETION]')
 
     parser.add_option('--publish_list',
                       action='store_true',
@@ -137,22 +157,24 @@ def _get_parser_opts():
                       metavar='PACKAGE_KEY')
     return parser
 
+
 def _execute_opts(obj, opts, args):
     if opts.repo_list:
-            obj.repo_list()
+        obj.repo_list()
 
     if opts.repo_create:
         if len(args) >= 3:
-            data.comment=args[0]
-            data.default_distribution=args[1]
-            data.default_component=args[2]
+            data.comment = args[0]
+            data.default_distribution = args[1]
+            data.default_component = args[2]
             obj.repo_create(opts.repo_create, data)
         else:
             obj.repo_create(opts.repo_create)
 
     if opts.repo_show_packages:
         if len(args) >= 3:
-            obj.repo_show_packages(opts.repo_show_packages, args[0], args[1], args[2])
+            obj.repo_show_packages(
+                opts.repo_show_packages, args[0], args[1], args[2])
         else:
             obj.repo_show_packages(opts.repo_show_packages)
 
@@ -161,9 +183,9 @@ def _execute_opts(obj, opts, args):
 
     if opts.repo_edit:
         if len(args) >= 3:
-            data.comment=args[0]
-            data.default_distribution=args[1]
-            data.default_component=args[2]
+            data.comment = args[0]
+            data.default_distribution = args[1]
+            data.default_component = args[2]
             obj.repo_edit(opts.repo_edit, data)
         else:
             print 'Wrong usage!'
@@ -178,7 +200,8 @@ def _execute_opts(obj, opts, args):
         obj.file_upload(opts.file_upload[0], opts.file_upload[1])
 
     if opts.repo_add_package_from_upload:
-        obj.repo_add_package_from_upload(opts.repo_add_package_from_upload[0], opts.repo_add_package_from_upload[1], opts.repo_add_package_from_upload[2])
+        o = opts.repo_add_package_from_upload
+        obj.repo_add_package_from_upload(o[0], o[1], o[2])
 
     if opts.repo_add_packages_by_key:
         print 'repo_add_packages_by_key'
@@ -202,29 +225,32 @@ def _execute_opts(obj, opts, args):
         obj.file_delete(opts.file_delete[0], opts.file_delete[1])
 
     if opts.snapshot_create_from_local_repo:
+        o = opts.snapshot_create_from_local_repo
         if len(args) >= 1:
-            obj.snapshot_create_from_local_repo(opts.snapshot_create_from_local_repo[0], opts.snapshot_create_from_local_repo[1], args[0])
+            obj.snapshot_create_from_local_repo(o[0], o[1], args[0])
         else:
-            obj.snapshot_create_from_local_repo(opts.snapshot_create_from_local_repo[0], opts.snapshot_create_from_local_repo[1])
+            obj.snapshot_create_from_local_repo(o[0], o[1])
 
     if opts.snapshot_create_by_pack_refs:
         o = opts.snapshot_create_by_pack_refs
         l = o[2].split(', ')
         if len(args) >= 1:
-            obj.snapshot_create_from_package_refs(o[0], o[1].split(', '), l, args[0])
+            obj.snapshot_create_from_package_refs(
+                o[0], o[1].split(', '), l, args[0])
         else:
             obj.snapshot_create_from_package_refs(o[0], o[1].split(', '), l)
 
-
     if opts.snapshot_show_packages:
+        o = opts.snapshot_show_packages
         if len(args) >= 3:
-            obj.snapshot_show_packages(opts.snapshot_show_packages, args[0], args[1], args[2])
+            obj.snapshot_show_packages(o, args[0], args[1], args[2])
         else:
-            obj.snapshot_show_packages(opts.snapshot_show_packages)
+            obj.snapshot_show_packages(o)
 
     if opts.snapshot_update:
+        o = opts.snapshot_update
         if len(args) >= 1:
-            obj.snapshot_update(opts.snapshot_update[0], opts.snapshot_update[1], args[0])
+            obj.snapshot_update(o[0], o[1], args[0])
 
     if opts.snapshot_list:
         if len(args) >= 1:
@@ -246,22 +272,26 @@ def _execute_opts(obj, opts, args):
         obj.publish_list()
 
     if opts.publish:
+        o = opts.publish
         if len(args) >= 5:
-            obj.publish(opts.publish[0], opts.publish[1], opts.publish[2], opts.publish[3], args[0], args[1], args[2], args[3], args[4])
+            obj.publish(
+                o[0], o[1], o[2], o[3], args[0], args[1], args[2], args[3], args[4])
         else:
-            obj.publish(opts.publish[0], opts.publish[1], opts.publish[2], opts.publish[3])
+            obj.publish(o[0], o[1], o[2], o[3])
 
     if opts.publish_switch:
+        o = opts.publish_switch
         if len(args) >= 2:
-            obj.publish_switch(opts.publish_switch[0], opts.publish_switch[1], opts.publish_switch[2], args[0], args[1])
+            obj.publish_switch(o[0], o[1], o[2], args[0], args[1])
         else:
-            obj.publish_switch(opts.publish_switch[0], opts.publish_switch[1], opts.publish_switch[2])
+            obj.publish_switch(o[0], o[1], o[2])
 
     if opts.publish_drop:
+        o = opts.publish_drop
         if len(args) >= 1:
-            obj.publish_drop(opts.publish_drop[0], opts.publish_drop[1], args[0])
+            obj.publish_drop(o[0], o[1], args[0])
         else:
-            obj.publish_drop(opts.publish_drop[0], opts.publish_drop[1])
+            obj.publish_drop(o[0], o[1])
 
     if opts.package_show_by_key:
         obj.package_show_by_key(opts.package_show_by_key)
@@ -271,4 +301,3 @@ def _execute_opts(obj, opts, args):
 
 if __name__ == "__main__":
     sys.exit(main())
-
