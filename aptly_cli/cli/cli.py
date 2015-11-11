@@ -2,13 +2,21 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-#from requests.exceptions import RequestException
-# for cli option parsing:
 from optparse import OptionParser
 
-from aptly_api.aptly_api_requests import AptlyApiRequests
+from aptly_cli.aptly_api_requests import AptlyApiRequests
 
-def _get_parser_options():
+def main():
+    obj = AptlyApiRequests()
+    parser = _get_parser_opts()
+    (opts, args) = parser.parse_args()
+    _execute_opts(obj, opts, args)
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+
+def _get_parser_opts():
     parser = OptionParser()
     # non argument option
     parser.add_option('--repo_list',
@@ -129,147 +137,137 @@ def _get_parser_options():
                       metavar='PACKAGE_KEY')
     return parser
 
+def _execute_opts(obj, opts, args):
+    if opts.repo_list:
+            obj.repo_list()
 
-def main():
-    ara = AptlyApiRequests()
-
-    parser = _get_parser_options()
-    (options, args) = parser.parse_args()
-
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(0)
-
-    if options.repo_list:
-        ara.repo_list()
-
-    if options.repo_create:
+    if opts.repo_create:
         if len(args) >= 3:
             data.comment=args[0]
             data.default_distribution=args[1]
             data.default_component=args[2]
-            ara.repo_create(options.repo_create, data)
+            obj.repo_create(opts.repo_create, data)
         else:
-            ara.repo_create(options.repo_create)
+            obj.repo_create(opts.repo_create)
 
-    if options.repo_show_packages:
+    if opts.repo_show_packages:
         if len(args) >= 3:
-            ara.repo_show_packages(options.repo_show_packages, args[0], args[1], args[2])
+            obj.repo_show_packages(opts.repo_show_packages, args[0], args[1], args[2])
         else:
-            ara.repo_show_packages(options.repo_show_packages)
+            obj.repo_show_packages(opts.repo_show_packages)
 
-    if options.repo_show:
-        ara.repo_show(options.repo_show)
+    if opts.repo_show:
+        obj.repo_show(opts.repo_show)
 
-    if options.repo_edit:
+    if opts.repo_edit:
         if len(args) >= 3:
             data.comment=args[0]
             data.default_distribution=args[1]
             data.default_component=args[2]
-            ara.repo_edit(options.repo_edit, data)
+            obj.repo_edit(opts.repo_edit, data)
         else:
             print 'Wrong usage!'
 
-    if options.repo_delete:
-        ara.repo_delete(options.repo_delete)
+    if opts.repo_delete:
+        obj.repo_delete(opts.repo_delete)
 
-    if options.file_list_dirs:
-        ara.file_list_directories()
+    if opts.file_list_dirs:
+        obj.file_list_directories()
 
-    if options.file_upload:
-        ara.file_upload(options.file_upload[0], options.file_upload[1])
+    if opts.file_upload:
+        obj.file_upload(opts.file_upload[0], opts.file_upload[1])
 
-    if options.repo_add_package_from_upload:
-        ara.repo_add_package_from_upload(options.repo_add_package_from_upload[0], options.repo_add_package_from_upload[1], options.repo_add_package_from_upload[2])
+    if opts.repo_add_package_from_upload:
+        obj.repo_add_package_from_upload(opts.repo_add_package_from_upload[0], opts.repo_add_package_from_upload[1], opts.repo_add_package_from_upload[2])
 
-    if options.repo_add_packages_by_key:
+    if opts.repo_add_packages_by_key:
         print 'repo_add_packages_by_key'
-        o = options.repo_add_packages_by_key
+        o = opts.repo_add_packages_by_key
         key_list = o[1].split(', ')
-        ara.repo_add_packages_by_key(o[0], key_list)
+        obj.repo_add_packages_by_key(o[0], key_list)
 
-    if options.repo_delete_packages_by_key:
+    if opts.repo_delete_packages_by_key:
         print 'repo_delete_packages_by_key'
-        o = options.repo_delete_packages_by_key
+        o = opts.repo_delete_packages_by_key
         key_list = o[1].split(', ')
-        ara.repo_delete_packages_by_key(o[0], key_list)
+        obj.repo_delete_packages_by_key(o[0], key_list)
 
-    if options.file_list:
-        ara.file_list()
+    if opts.file_list:
+        obj.file_list()
 
-    if options.file_delete_dir:
-        ara.file_delete_directory(options.file_delete_dir)
+    if opts.file_delete_dir:
+        obj.file_delete_directory(opts.file_delete_dir)
 
-    if options.file_delete:
-        ara.file_delete(options.file_delete[0], options.file_delete[1])
+    if opts.file_delete:
+        obj.file_delete(opts.file_delete[0], opts.file_delete[1])
 
-    if options.snapshot_create_from_local_repo:
+    if opts.snapshot_create_from_local_repo:
         if len(args) >= 1:
-            ara.snapshot_create_from_local_repo(options.snapshot_create_from_local_repo[0], options.snapshot_create_from_local_repo[1], args[0])
+            obj.snapshot_create_from_local_repo(opts.snapshot_create_from_local_repo[0], opts.snapshot_create_from_local_repo[1], args[0])
         else:
-            ara.snapshot_create_from_local_repo(options.snapshot_create_from_local_repo[0], options.snapshot_create_from_local_repo[1])
+            obj.snapshot_create_from_local_repo(opts.snapshot_create_from_local_repo[0], opts.snapshot_create_from_local_repo[1])
 
-    if options.snapshot_create_by_pack_refs:
-        o = options.snapshot_create_by_pack_refs
+    if opts.snapshot_create_by_pack_refs:
+        o = opts.snapshot_create_by_pack_refs
         l = o[2].split(', ')
         if len(args) >= 1:
-            ara.snapshot_create_from_package_refs(o[0], o[1].split(', '), l, args[0])
+            obj.snapshot_create_from_package_refs(o[0], o[1].split(', '), l, args[0])
         else:
-            ara.snapshot_create_from_package_refs(o[0], o[1].split(', '), l)
+            obj.snapshot_create_from_package_refs(o[0], o[1].split(', '), l)
 
 
-    if options.snapshot_show_packages:
+    if opts.snapshot_show_packages:
         if len(args) >= 3:
-            ara.snapshot_show_packages(options.snapshot_show_packages, args[0], args[1], args[2])
+            obj.snapshot_show_packages(opts.snapshot_show_packages, args[0], args[1], args[2])
         else:
-            ara.snapshot_show_packages(options.snapshot_show_packages)
+            obj.snapshot_show_packages(opts.snapshot_show_packages)
 
-    if options.snapshot_update:
+    if opts.snapshot_update:
         if len(args) >= 1:
-            ara.snapshot_update(options.snapshot_update[0], options.snapshot_update[1], args[0])
+            obj.snapshot_update(opts.snapshot_update[0], opts.snapshot_update[1], args[0])
 
-    if options.snapshot_list:
+    if opts.snapshot_list:
         if len(args) >= 1:
-            ara.snapshot_list(args[0])
+            obj.snapshot_list(args[0])
         else:
-            ara.snapshot_list()
+            obj.snapshot_list()
 
-    if options.snapshot_diff:
-        ara.snapshot_diff(options.snapshot_diff[0], options.snapshot_diff[1])
+    if opts.snapshot_diff:
+        obj.snapshot_diff(opts.snapshot_diff[0], opts.snapshot_diff[1])
 
-    if options.snapshot_delete:
+    if opts.snapshot_delete:
         if len(args) >= 1:
             print args[0]
-            ara.snapshot_delete(options.snapshot_delete, args[0])
+            obj.snapshot_delete(opts.snapshot_delete, args[0])
         else:
-            ara.snapshot_delete(options.snapshot_delete)
+            obj.snapshot_delete(opts.snapshot_delete)
 
-    if options.publish_list:
-        ara.publish_list()
+    if opts.publish_list:
+        obj.publish_list()
 
-    if options.publish:
+    if opts.publish:
         if len(args) >= 5:
-            ara.publish(options.publish[0], options.publish[1], options.publish[2], options.publish[3], args[0], args[1], args[2], args[3], args[4])
+            obj.publish(opts.publish[0], opts.publish[1], opts.publish[2], opts.publish[3], args[0], args[1], args[2], args[3], args[4])
         else:
-            ara.publish(options.publish[0], options.publish[1], options.publish[2], options.publish[3])
+            obj.publish(opts.publish[0], opts.publish[1], opts.publish[2], opts.publish[3])
 
-    if options.publish_switch:
+    if opts.publish_switch:
         if len(args) >= 2:
-            ara.publish_switch(options.publish_switch[0], options.publish_switch[1], options.publish_switch[2], args[0], args[1])
+            obj.publish_switch(opts.publish_switch[0], opts.publish_switch[1], opts.publish_switch[2], args[0], args[1])
         else:
-            ara.publish_switch(options.publish_switch[0], options.publish_switch[1], options.publish_switch[2])
+            obj.publish_switch(opts.publish_switch[0], opts.publish_switch[1], opts.publish_switch[2])
 
-    if options.publish_drop:
+    if opts.publish_drop:
         if len(args) >= 1:
-            ara.publish_drop(options.publish_drop[0], options.publish_drop[1], args[0])
+            obj.publish_drop(opts.publish_drop[0], opts.publish_drop[1], args[0])
         else:
-            ara.publish_drop(options.publish_drop[0], options.publish_drop[1])
+            obj.publish_drop(opts.publish_drop[0], opts.publish_drop[1])
 
-    if options.package_show_by_key:
-        ara.package_show_by_key(options.package_show_by_key)
+    if opts.package_show_by_key:
+        obj.package_show_by_key(opts.package_show_by_key)
 
-    if options.get_version:
-        ara.get_version()
+    if opts.get_version:
+        obj.get_version()
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -12,7 +12,7 @@ import os
 # if 'REST_API_DEBUG' not in os.environ:
 #     os.environ['REST_API_DEBUG'] = '1'
 
-from cli.aptly_api_cli import main
+from aptly_cli.cli.cli import main
 
 if __name__ == '__main__':
     main()
