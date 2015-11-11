@@ -24,7 +24,7 @@ bundled with this repository to execute your requests via command line.
 ## Help
 Show this help message and exit
 ```
--h, python aptly_api_cli.py --help
+-h, --help
 ```
 ## Local Repos API
 Local repositories management via REST API.
