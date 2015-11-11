@@ -5,10 +5,10 @@ Aptly API Requests
 
 .. automodule:: aptly_api_requests
 .. autoclass:: aptly_api_requests.AptlyApiRequests
-    :members:
-    :undoc-members:
-    :inherited-members:
-    :show-inheritance:
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
 
 
 
