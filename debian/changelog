@@ -1,4 +1,4 @@
-aptly-cli (VERSION) UNRELEASED; urgency=low
+aptly-cli (0.1.8-c4efef0ac0263ac3c8b55357f684aa01cf71e727-unstable) UNRELEASED; urgency=low
 
   * Initial release. (Closes: #XXXXXX)
 
