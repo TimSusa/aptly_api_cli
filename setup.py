@@ -14,7 +14,7 @@ setup(
     description='This python command line interface, executes calls to the Aptly server remotely, without blocking the Aptly database.',
     long_description=__doc__,
     packages=find_packages(),
-    py_modules=['main', 'aptly_api_requests'],
+    py_modules=['aptly_cli', 'cli'],
     entry_points={
         'console_scripts': [
             'aptly-cli=aptly_cli.cli:main'
