@@ -17,7 +17,7 @@ setup(
     py_modules=['main', 'aptly_api_requests'],
     entry_points={
         'console_scripts': [
-            'aptly-cli=aptly_cli:cli:main'
+            'aptly-cli=aptly_cli.cli:main'
         ]
     },
     # data_files=[
