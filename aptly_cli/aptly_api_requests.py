@@ -6,7 +6,7 @@ import sys
 import json
 import requests
 #from requests.exceptions import RequestException
-# for cli option parsing:
+
 
 class AptlyApiRequests(object):
 

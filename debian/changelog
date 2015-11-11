@@ -1,4 +1,5 @@
-aptly_api_cli (0.1.33-491e3cf937d25a0844fc35efca3cd74654f46727-stable) testing; urgency=low
+PACKAGE (VERSION) UNRELEASED; urgency=low
 
-  [ Jenkins ]
-  * Build #33. Started by user richter.
+  * Initial release. (Closes: #XXXXXX)
+
+ -- Jenkins <jenkins@static.88-198-43-17.clients.your-server.de>  Wed, 11 Nov 2015 15:32:06 +0000
