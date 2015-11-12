@@ -1,4 +1,5 @@
 #! /bin/bash
 
 set -e
-export PATH="$PATH:/usr/share/python/aptly-cli/bin"
+PATH="$PATH:/usr/share/python/aptly-cli/bin"
+ln -s /usr/share/python/aptly-cli/bin/aptly-cli /usr/bin/aptly-cli

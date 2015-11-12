@@ -5,6 +5,9 @@ from optparse import OptionParser
 
 from aptly_cli.api.api import AptlyApiRequests
 
+"""
+Main entry point for cli.
+"""
 
 def main():
     obj = AptlyApiRequests()
