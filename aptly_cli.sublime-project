@@ -1,0 +1,28 @@
+{
+	"folders":
+	[
+		{
+      "follow_symlinks": true,
+			"path": "/Users/timsusa/data/development/masterhoshi/aptly_api_cli"
+		}
+	],
+  "settings": {
+      "python_interpreter_path": "/Users/timsusa/.virtualenvs/rest-api-env/bin/python"
+  },
+  "SublimeLinter":
+    {
+        "linters":
+        {
+            "pylint": {
+                "@disable": false,
+                "args": [],
+                "disable": "",
+                "enable": "",
+                "excludes": [],
+                "paths": ["/Users/timsusa/.virtualenvs/rest-api-env/bin/pylint"],
+                "rcfile": "/Users/timsusa/data/development/masterhoshi/aptly_api_cli/pylintrc",
+                "show-codes": true
+            }
+        }
+    }
+}

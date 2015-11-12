@@ -1,15 +1,20 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+
+"""
+The CLI with option parser
+"""
+
 import sys
 from optparse import OptionParser
 
 from aptly_cli.api.api import AptlyApiRequests
 
-"""
-Main entry point for cli.
-"""
 
 def main():
+    """
+    Main entry point for cli.
+    """
     obj = AptlyApiRequests()
     parser = _get_parser_opts()
     (opts, args) = parser.parse_args()
@@ -21,6 +26,9 @@ def main():
 
 
 def _get_parser_opts():
+    """ _get_parser_opts
+    Create parser, options and return object.
+    """
     parser = OptionParser()
 
     parser.add_option('--repo_list',
@@ -97,7 +105,7 @@ def _get_parser_opts():
 
     parser.add_option('--snapshot_create_by_pack_refs',
                       nargs=3,
-                      help='Create snapshot by package references (Please use %20 for spaces for one package reference)',
+                      help='Create snapshot by package references',
                       metavar='SNAPSHOT_NAME SOURCE_SNAPSHOTS PACKAGE_REF_LIST [DESCRIPTION]')
 
     parser.add_option('--snapshot_show',
@@ -161,18 +169,25 @@ def _get_parser_opts():
 
 
 def _execute_opts(obj, opts, args):
+    """ _execute_opts
+    Execute functions due to options and arguments.
+    """
+    class Data:
+        """
+        Create dat object and use it as argument.
+        """
+        def __init__(self):
+            pass
+
     if opts.repo_list:
         obj.repo_list()
 
     if opts.repo_create:
         if len(args) >= 3:
-            class data:
-                pass
-
-            data.comment = args[0]
-            data.default_distribution = args[1]
-            data.default_component = args[2]
-            obj.repo_create(opts.repo_create, data)
+            Data.comment = args[0]
+            Data.default_distribution = args[1]
+            Data.default_component = args[2]
+            obj.repo_create(opts.repo_create, Data)
         else:
             obj.repo_create(opts.repo_create)
 
@@ -188,10 +203,10 @@ def _execute_opts(obj, opts, args):
 
     if opts.repo_edit:
         if len(args) >= 3:
-            data.comment = args[0]
-            data.default_distribution = args[1]
-            data.default_component = args[2]
-            obj.repo_edit(opts.repo_edit, data)
+            Data.comment = args[0]
+            Data.default_distribution = args[1]
+            Data.default_component = args[2]
+            obj.repo_edit(opts.repo_edit, Data)
         else:
             print 'Wrong usage!'
 

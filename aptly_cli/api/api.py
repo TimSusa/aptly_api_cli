@@ -1,15 +1,13 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+
 """ AptlyApiRequests
 Instances of this class will be able to talk
 to the Aptly REST API remotely.
 """
 
-import os
-import sys
 import json
 import requests
-#from requests.exceptions import RequestException
 
 
 class AptlyApiRequests(object):
@@ -49,6 +47,9 @@ class AptlyApiRequests(object):
         self.headers = {'content-type': 'application/json'}
 
     def _out(self, arg_list):
+        """ _out
+        Will give beautified output of a list.
+        """
         for y in arg_list:
             print y
 
@@ -92,7 +93,6 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-
     def repo_show(self, repo_name):
         """
         SHOW
@@ -112,14 +112,12 @@ class AptlyApiRequests(object):
         Example:
         $ curl http://localhost:8080/api/repos/aptly-repo
         """
-        r = requests.get(
-            self.cfg['route_repo'] + repo_name, headers=self.headers)
-#        r.raise_for_status()
+        r = requests.get(self.cfg['route_repo'] + repo_name, headers=self.headers)
         resp_data = json.loads(r.content)
         print resp_data
         return resp_data
 
-    def repo_show_packages(self, repo_name, package_to_search=None, withDeps=0, format='compact'):
+    def repo_show_packages(self, repo_name, package_to_search=None, with_deps=0, detail='compact'):
         """
         SHOW PACKAGES/SEARCH
         GET /api/repos/:name/packages
@@ -128,7 +126,8 @@ class AptlyApiRequests(object):
         Query params:
         q - package query, if missing - return all packages
         withDeps - set to 1 to include dependencies when evaluating package query
-        format - result format, compact by default ( self, only package keys), details to return full information about each package ( self, might be slow on large repos)
+        detail - result format, compact by default ( self, only package keys),
+                 details to return full information about each package ( self, might be slow on large repos)
 
         Example:
         $ curl http://localhost:8080/api/repos/aptly-repo/packages
@@ -136,14 +135,14 @@ class AptlyApiRequests(object):
 
         if package_to_search is None:
             param = {
-                'withDeps': withDeps,
-                'format': format
+                'withDeps': with_deps,
+                'format': detail
             }
         else:
             param = {
                 'q': package_to_search,
-                'withDeps': withDeps,
-                'format': format
+                'withDeps': with_deps,
+                'format': detail
             }
         url = self.cfg['route_repo'] + repo_name + '/packages'
 
@@ -170,7 +169,8 @@ class AptlyApiRequests(object):
         Response is the same as for GET /api/repos/:name API.
 
         Example:
-        $ curl -X PUT -H 'Content-Type: application/json' --data '{"DefaultDistribution": "trusty"}' http://localhost:8080/api/repos/local1
+        $ curl -X PUT -H 'Content-Type: application/json'
+        --data '{"DefaultDistribution": "trusty"}' http://localhost:8080/api/repos/local1
         """
 
         if data is None:
@@ -210,7 +210,8 @@ class AptlyApiRequests(object):
         DELETE
         DELETE /api/repos/:name
         Delete local repository.
-        Local repository can’t be deleted if it is published. If local repository has snapshots, aptly would refuse to delete it by default, but that can be overridden with force flag.
+        Local repository can’t be deleted if it is published. If local repository has snapshots,
+        aptly would refuse to delete it by default, but that can be overridden with force flag.
 
         Query params:
         force when value is set to 1, delete local repository even if it has snapshots
@@ -232,13 +233,16 @@ class AptlyApiRequests(object):
         ADD PACKAGES FROM UPLOADED FILE/DIRECTORY
         POST /api/repos/:name/file/:dir
         POST /api/repos/:name/file/:dir/:file
-        Import packages from files ( uploaded using File Upload API) to the local repository. If directory specified, aptly would discover package files automatically.
+        Import packages from files ( uploaded using File Upload API) to the local repository.
+        If directory specified, aptly would discover package files automatically.
         Adding same package to local repository is not an error.
-        By default aptly would try to remove every successfully processed file and directory :dir ( if it becomes empty after import).
+        By default aptly would try to remove every successfully processed file and directory :dir
+        ( if it becomes empty after import).
 
         Query params:
         noRemove - when value is set to 1, don’t remove any files
-        forceReplace - when value is set to 1, remove packages conflicting with package being added ( in local repository)
+        forceReplace - when value is set to 1, remove packages conflicting with package being added
+        (in local repository).
 
         HTTP Errors:
         404 repository with such name doesn’t exist
@@ -257,12 +261,13 @@ class AptlyApiRequests(object):
         if file_name is None:
             url = self.cfg['route_repo'] + repo_name + '/file/' + dir_name
         else:
-            url = self.cfg['route_repo'] + repo_name + '/file/' + dir_name + '/' + file_name
+            url = self.cfg['route_repo'] + repo_name + \
+                '/file/' + dir_name + '/' + file_name
 
         if params is not None:
             query_param = {
-                'noRemove': param.no_remove,
-                'forceReplace': param.force_replace
+                'noRemove': params.no_remove,
+                'forceReplace': params.force_replace
             }
         else:
             query_param = {
@@ -283,8 +288,10 @@ class AptlyApiRequests(object):
         ADD PACKAGES BY KEY
         POST /api/repos/:name/packages
         Add packages to local repository by package keys.
-        Any package could be added, it should be part of aptly database ( it could come from any mirror, snapshot, other local repository). This API combined with package list ( search) APIs allows to implement importing, copying, moving packages around.
-        API verifies that packages actually exist in aptly database and checks constraint that conflicting packages can’t be part of the same local repository.
+        Any package could be added, it should be part of aptly database ( it could come from any mirror, snapshot,
+        other local repository). This API combined with package list ( search) APIs allows to implement importing,
+        copying, moving packages around. API verifies that packages actually exist in aptly database and checks
+        constraint that conflicting packages can’t be part of the same local repository.
 
         JSON body params:
         PackageRefs [][string]  list of package references ( package keys)
@@ -297,7 +304,9 @@ class AptlyApiRequests(object):
         Response is the same as for GET /api/repos/:name API.
 
         Example
-        $ curl -X POST -H 'Content-Type: application/json' --data '{"PackageRefs": ["Psource pyspi 0.6.1-1.4 f8f1daa806004e89","Pi386 libboost-program-options-dev 1.49.0.1 918d2f433384e378"]}' http://localhost:8080/api/repos/repo2/packages
+        $ curl -X POST -H 'Content-Type: application/json' --data '{"PackageRefs":
+        ["Psource pyspi 0.6.1-1.4 f8f1daa806004e89","Pi386 libboost-program-options-dev 1.49.0.1 918d2f433384e378"]}'
+        http://localhost:8080/api/repos/repo2/packages
         """
         if len(package_key_list) <= 0:
             print 'No packages were given... aborting'
@@ -317,7 +326,8 @@ class AptlyApiRequests(object):
         DELETE PACKAGES BY KEY
         DELETE /api/repos/:name/packages
         Remove packages from local repository by package keys.
-        Any package could be removed from local repository. List package references in local repository could be retrieved with GET /repos/:name/packages.
+        Any package could be removed from local repository. List package references in local repository could be
+        retrieved with GET /repos/:name/packages.
 
         JSON body params:
         PackageRefs [][string]  list of package references ( package keys)
@@ -327,7 +337,9 @@ class AptlyApiRequests(object):
         Response is the same as for GET /api/repos/:name API.
 
         Example:
-        $ curl -X DELETE -H 'Content-Type: application/json' --data '{"PackageRefs": ["Pi386 libboost-program-options-dev 1.49.0.1 918d2f433384e378"]}' http://localhost:8080/api/repos/repo2/packages
+        $ curl -X DELETE -H 'Content-Type: application/json' --data '{"PackageRefs":
+        ["Pi386 libboost-program-options-dev 1.49.0.1 918d2f433384e378"]}'
+        http://localhost:8080/api/repos/repo2/packages
         """
         url = self.cfg['route_repo'] + repo_name + '/packages'
         data = {
@@ -337,8 +349,6 @@ class AptlyApiRequests(object):
         resp_data = json.loads(r.content)
         print resp_data
         return resp_data
-
-
 
     ###################
     # FILE UPLOAD API #
@@ -359,12 +369,13 @@ class AptlyApiRequests(object):
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
 
-    def file_upload(self, dir_name, file):
+    def file_upload(self, dir_name, file_path):
         """
         UPLOAD FILE
         POST /api/files/:dir
         Parameter :dir is upload directory name. Directory would be created if it doesn’t exist.
-        Any number of files can be uploaded in one call, aptly would preserve filenames. No check is performed if existing uploaded would be overwritten.
+        Any number of files can be uploaded in one call, aptly would preserve filenames.
+        No check is performed if existing uploaded would be overwritten.
         Response: list of uploaded files as :dir/:file.
 
         Example:
@@ -372,7 +383,7 @@ class AptlyApiRequests(object):
         """
 
         f = {
-            'file': open(file, 'rb')
+            'file': open(file_path, 'rb')
         }
 
         r = requests.post(self.cfg['route_file'] + dir_name,
@@ -399,12 +410,12 @@ class AptlyApiRequests(object):
         if dir_name is None:
             dir_name = ''
 
-        r = requests.get(self.cfg['route_file'] + dir_name, headers=self.headers)
+        r = requests.get(self.cfg['route_file'] +
+                         dir_name, headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
         return resp_data
-
 
     def file_delete_directory(self, dir_name):
         """
@@ -415,7 +426,8 @@ class AptlyApiRequests(object):
         Example:
         $ curl -X DELETE http://localhost:8080/api/files/aptly-0.9
         """
-        r = requests.delete(self.cfg['route_file'] + dir_name, headers=self.headers)
+        r = requests.delete(
+            self.cfg['route_file'] + dir_name, headers=self.headers)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
@@ -430,7 +442,8 @@ class AptlyApiRequests(object):
         Example:
         $ curl -X DELETE http://localhost:8080/api/files/aptly-0.9/aptly_0.9~dev+217+ge5d646c_i386.deb
         """
-        r = requests.delete(self.cfg['route_file'] + dir_name + '/' + file_name, headers=self.headers)
+        r = requests.delete(
+            self.cfg['route_file'] + dir_name + '/' + file_name, headers=self.headers)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
@@ -455,12 +468,12 @@ class AptlyApiRequests(object):
         params = {
             'sort': sort
         }
-        r = requests.get(self.cfg['route_snap'], headers=self.headers, params=params)
+        r = requests.get(self.cfg['route_snap'],
+                         headers=self.headers, params=params)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
         self._out(resp_data)
         return resp_data
-
 
     def snapshot_create_from_local_repo(self, snapshot_name, repo_name, description=None):
         """
@@ -478,11 +491,12 @@ class AptlyApiRequests(object):
         404 local repo with name :name doesn’t exist
 
         Example:
-        $ curl -X POST -H 'Content-Type: application/json' --data '{"Name":"snap9"}' http://localhost:8080/api/repos/local-repo/snapshots
+        $ curl -X POST -H 'Content-Type: application/json'
+        --data '{"Name":"snap9"}' http://localhost:8080/api/repos/local-repo/snapshots
         """
         url = self.cfg['route_repo'] + repo_name + '/snapshots'
         if description is None:
-            description = 'Description for '+ snapshot_name
+            description = 'Description for ' + snapshot_name
 
         data = {
             'Name': snapshot_name,
@@ -495,12 +509,13 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-    def snapshot_create_from_package_refs(self, snapshot_name, source_snapshot_list, package_refs_list, description=None):
+    def snapshot_create_from_package_refs(self, snapshot_name, source_snapshot_list, package_refs_list, descr=None):
         """
         CREATE SNAPSHOT FROM PACKAGE REFS
         POST /api/snapshots
         Create snapshot from list of package references.
-        This API creates snapshot out of any list of package references. Package references could be obtained from other snapshots, local repos or mirrors.
+        This API creates snapshot out of any list of package references.
+        Package references could be obtained from other snapshots, local repos or mirrors.
 
         Name - [string], required  snapshot name
         Description - [string]  free-format description how snapshot has been created
@@ -514,30 +529,25 @@ class AptlyApiRequests(object):
 
         Example:
         $ curl -X POST -H 'Content-Type: application/json' --data '{"Name":"empty"}' http://localhost:8080/api/snapshots
-        $ curl -X POST -H 'Content-Type: application/json' --data '{"Name":"snap10", "SourceSnapshots": ["snap9"], "Description": "Custom", "PackageRefs": ["Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e"]}'  http://localhost:8080/api/snapshots
+        $ curl -X POST -H 'Content-Type: application/json'
+        --data '{"Name":"snap10", "SourceSnapshots": ["snap9"], "Description": "Custom", "PackageRefs":
+        ["Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e"]}'  http://localhost:8080/api/snapshots
         """
         url = self.cfg['route_snap'][:-1]
-        if description is None:
-            description = 'Description for '+ snapshot_name
+        if descr is None:
+            descr = 'Description for ' + snapshot_name
 
-        print snapshot_name
-        print description
-        print source_snapshot_list
-        print package_refs_list
         data = {
             'Name': snapshot_name,
-            'Description': description,
+            'Description': descr,
             'SourceSnapshots': source_snapshot_list,
             'PackageRefs': package_refs_list
         }
 
         r = requests.post(url, data=json.dumps(data), headers=self.headers)
-        # r.raise_for_status()
         resp_data = json.loads(r.content)
         print resp_data
         return resp_data
-
-
 
     def snapshot_update(self, old_snapshot_name, new_snapshot_name, description=None):
         """
@@ -554,7 +564,8 @@ class AptlyApiRequests(object):
         409 rename is not possible: name already used by another snapshot
 
         Example:
-        $ curl -X PUT -H 'Content-Type: application/json' --data '{"Name": "snap-wheezy"}' http://localhost:8080/api/snapshots/snap1
+        $ curl -X PUT -H 'Content-Type: application/json' --data '{"Name": "snap-wheezy"}'
+        http://localhost:8080/api/snapshots/snap1
         """
         url = self.cfg['route_snap'] + old_snapshot_name
         if description is None:
@@ -569,7 +580,6 @@ class AptlyApiRequests(object):
         resp_data = json.loads(r.content)
         print resp_data
         return resp_data
-
 
     def snapshot_show(self, snapshot_name):
         """
@@ -594,7 +604,8 @@ class AptlyApiRequests(object):
         """
         DELETE
         DELETE /api/snapshots/:name
-        Delete snapshot. Snapshot can’t be deleted if it is published. aptly would refuse to delete snapshot if it has been used as source to create other snapshots, but that could be overridden with force parameter.
+        Delete snapshot. Snapshot can’t be deleted if it is published. aptly would refuse to delete snapshot if it has
+        been used as source to create other snapshots, but that could be overridden with force parameter.
 
         Query params:
         force -  when value is set to 1, delete snapshot even if it has been used as source snapshot
@@ -621,8 +632,7 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-
-    def snapshot_show_packages(self, snapshot_name, package_to_search=None, withDeps=0, format='compact'):
+    def snapshot_show_packages(self, snapshot_name, package_to_search=None, with_deps=0, detail='compact'):
         """
         SHOW PACKAGES/SEARCH
         GET /api/snapshots/:name/packages
@@ -631,7 +641,8 @@ class AptlyApiRequests(object):
         Query params:
         q - package query, if missing - return all packages
         withDeps - set to 1 to include dependencies when evaluating package query
-        format - result format, compact by default ( only package keys), details to return full information about each package ( might be slow on large snapshots)
+        format - result format, compact by default ( only package keys), details to return full
+        information about each package ( might be slow on large snapshots)
 
         Example:
         $ curl http://localhost:8080/api/snapshots/snap2/packages
@@ -641,14 +652,14 @@ class AptlyApiRequests(object):
 
         if package_to_search is None:
             param = {
-                'withDeps': withDeps,
-                'format': format
+                'withDeps': with_deps,
+                'format': detail
             }
         else:
             param = {
                 'q': package_to_search,
-                'withDeps': withDeps,
-                'format': format
+                'withDeps': with_deps,
+                'format': detail
             }
 
         r = requests.get(url, params=param, headers=self.headers)
@@ -674,12 +685,12 @@ class AptlyApiRequests(object):
         Example:
         $ curl http://localhost:8080/api/snapshots/snap2/diff/snap3
         """
-        url = self.cfg['route_snap'] + snapshot_left + '/diff/' + snapshot_right
+        url = self.cfg['route_snap'] + \
+            snapshot_left + '/diff/' + snapshot_right
         r = requests.get(url, headers=self.headers)
         resp = json.loads(r.content)
         print resp
         return resp
-
 
     ###############
     # PUBLISH API #
@@ -700,11 +711,12 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-    def publish(self, prefix, sources_kind, sources_list, distribution_name, component=None, label=None, origin=None, force_overwrite=None, architectures_list=None):
+    def publish(self, prefix, src_kind, sources_list, dist, comp=None, label=None, orig=None, overwrite=None, arch_list=None):
         """
         PUBLISH SNAPSHOT/LOCAL REPO
         POST /api/publish/:prefix
-        Publish local repository or snapshot under specified prefix. Storage might be passed in prefix as well, e.g. s3:packages/. To supply empty prefix, just remove last part (POST /api/publish)
+        Publish local repository or snapshot under specified prefix. Storage might be passed in prefix as well,
+        e.g. s3:packages/. To supply empty prefix, just remove last part (POST /api/publish)
 
         JSON body params:
         SourceKind - [string], required  source kind: local for local repositories and snapshot for snapshots
@@ -716,35 +728,44 @@ class AptlyApiRequests(object):
         Architectures - [][string]  override list of published architectures
 
         Notes on Sources field:
-        when publishing single component repository, Component may be omitted, it would be guessed from source or set to default value main
+        when publishing single component repository, Component may be omitted, it would be guessed from source or
+        set to default value main
         for multiple component published repository, Component would be guessed from source if not set
         GPG signing would happen in aptly server, using local to server gpg binary, keyrings.
-        It’s not possible to configure publishing endpoints via API, they should be set in configuration and require aptly server restart.
+        It’s not possible to configure publishing endpoints via API, they should be set in configuration and
+        require aptly server restart.
 
         HTTP errors:
         400 prefix/distribution is already used by another published repository
         404 source snapshot/repo hasn’t been found
 
         Example:
-        $ curl -X POST -H 'Content-Type: application/json' --data '{"SourceKind": "local", "Sources": [{"Name": "local-repo"}], "Architectures": ["i386", "amd64"], "Distribution": "wheezy"}' http://localhost:8080/api/publish
-        $ curl -X POST -H 'Content-Type: application/json' --data '{"SourceKind": "local", "Sources": [{"Name": "0XktRe6qMFp4b8C", "Component": "contrib"}, {"Name": "EqmoTZiVx8MGN65", "Component": "non-free"}], "Architectures": ["i386", "amd64"], "Distribution": "wheezy"}' http://localhost:8080/api/publish/debian_testing/
+        $ curl -X POST -H 'Content-Type: application/json'
+        --data '{"SourceKind": "local", "Sources": [{"Name": "local-repo"}],
+        "Architectures": ["i386", "amd64"], "Distribution": "wheezy"}'
+        http://localhost:8080/api/publish
+
+        $ curl -X POST -H 'Content-Type: application/json'
+        --data '{"SourceKind": "local", "Sources": [{"Name": "0XktRe6qMFp4b8C", "Component": "contrib"},
+        {"Name": "EqmoTZiVx8MGN65", "Component": "non-free"}],
+        "Architectures": ["i386", "amd64"], "Distribution": "wheezy"}'
+        http://localhost:8080/api/publish/debian_testing/
         """
         url = self.cfg['route_pub'] + prefix
 
-        if component is None:
+        if comp is None:
             print 'WARNING: Component was not given... setting to main'
-            component = 'main'
-
+            comp = 'main'
 
         # Prepare list of sources
         sources = []
-        comp_list = component.split()
-        list = sources_list.split()
-        if len(comp_list) != len(list):
+        comp_list = comp.split()
+        src_list = sources_list.split()
+        if len(comp_list) != len(src_list):
             print "ERROR: sources list and components list should have same length"
             return
 
-        for x in list:
+        for x in src_list:
             for y in comp_list:
                 row = {
                     'Name': x,
@@ -754,29 +775,29 @@ class AptlyApiRequests(object):
 
         dat = {}
         if label is None:
-            if origin is None:
-                if force_overwrite is None:
-                    if architectures_list is None:
+            if orig is None:
+                if overwrite is None:
+                    if arch_list is None:
                         print 'simple publish'
                         dat = {
-                            'SourceKind': sources_kind,
+                            'SourceKind': src_kind,
                             'Sources': sources,
-                            'Distribution': distribution_name
+                            'Distribution': dist
                         }
         else:
             print 'fancy publish'
-            if int(force_overwrite) <= 0:
+            if int(overwrite) <= 0:
                 fo = False
             else:
                 fo = True
             print fo
             dat = {
-                'SourceKind': sources_kind,
+                'SourceKind': src_kind,
                 'Sources': sources,
-                'Distribution': distribution_name,
-                'Architectures': architectures_list.split(),
+                'Distribution': dist,
+                'Architectures': arch_list.split(),
                 'Label': label,
-                'Origin': origin,
+                'Origin': orig,
                 'ForceOverwrite': fo
             }
 
@@ -800,7 +821,8 @@ class AptlyApiRequests(object):
         ForceOverwrite - bool  when publishing, overwrite files in pool/ directory without notice
 
         Example:
-        $ curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots": [{"Component": "main", "Name": "8KNOnIC7q900L5v"}]}' http://localhost:8080/api/publish//wheezy
+        $ curl -X PUT -H 'Content-Type: application/json' --data '{"Snapshots":
+        [{"Component": "main", "Name": "8KNOnIC7q900L5v"}]}' http://localhost:8080/api/publish//wheezy
         """
         if prefix is None:
             prefix = ''
@@ -809,7 +831,6 @@ class AptlyApiRequests(object):
             fo = False
         else:
             fo = True
-
 
         url = self.cfg['route_pub'] + prefix + '/' + distribution
 
@@ -835,7 +856,6 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-
     def publish_drop(self, prefix, distribution, force=0):
         """
         DROP PUBLISHED REPOSITORY
@@ -844,7 +864,9 @@ class AptlyApiRequests(object):
 
         Query params:
         force -  force published repository removal even if component cleanup fails
-        Usually ?force=1 isn’t required, but if due to some corruption component cleanup fails, ?force=1 could be used to drop published repository. This might leave some published repository files left under public/ directory.
+        Usually ?force=1 isn’t required, but if due to some corruption component cleanup fails,
+        ?force=1 could be used to drop published repository.
+        This might leave some published repository files left under public/ directory.
 
         Example:
         $ curl -X DELETE http://localhost:8080/api/publish//wheezy
@@ -861,7 +883,6 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-
     ###############
     # PACKAGE API #
     ###############
@@ -875,7 +896,8 @@ class AptlyApiRequests(object):
 
         Response:
         Key - [sitring]  package key (unique package identifier)
-        ShortKey - [string]  short package key (should be unique in one package list: snapshot, mirror, local repository)
+        ShortKey - [string]  short package key (should be unique in one package list: snapshot, mirror,
+        local repository)
         FilesHash - [string]  hash of package files
         Package Stanza Fields - [string]  all package stanza fields, e.g. Package, Architecture, …
 
