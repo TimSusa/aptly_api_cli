@@ -3,9 +3,8 @@
 set -e
 PATH="$PATH:/usr/share/python/aptly-cli/bin"
 
-#!/bin/bash
 FILE='/usr/bin/aptly-cli'
-if [ -f $FILE ]; then
+if [ -e $FILE ]; then
    echo "File '$FILE' Exists"
 else
    echo "The File '$FILE' Does Not Exist...creating symbolic link"
