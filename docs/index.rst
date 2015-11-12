@@ -13,7 +13,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   aptly_cli
+   api
    cli
 
 

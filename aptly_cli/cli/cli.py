@@ -4,7 +4,7 @@ import os
 import sys
 from optparse import OptionParser
 
-from aptly_cli.aptly_api_requests import AptlyApiRequests
+from aptly_cli.api.api import AptlyApiRequests
 
 
 def main():

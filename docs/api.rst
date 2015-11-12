@@ -1,10 +1,10 @@
-.. _aptly_cli:
+.. _api:
 
 Aptly API Requests
 ==================
 
-.. automodule:: aptly_api_requests
-.. autoclass:: aptly_api_requests.AptlyApiRequests
+.. automodule:: api.api
+.. autoclass:: api.api.AptlyApiRequests
    :members:
    :undoc-members:
    :inherited-members:
