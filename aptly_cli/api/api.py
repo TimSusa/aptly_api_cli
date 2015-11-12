@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+""" AptlyApiRequests
+Instances of this class will be able to talk
+to the Aptly REST API remotely.
+"""
 
 import os
 import sys
@@ -10,7 +14,7 @@ import requests
 
 class AptlyApiRequests(object):
 
-    """
+    """ AptlyApiRequests
     Instances of this class will be able to talk
     to the Aptly REST API remotely.
     """
