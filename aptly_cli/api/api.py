@@ -45,12 +45,8 @@ class AptlyApiRequests(object):
 
         self.headers = {'content-type': 'application/json'}
 
-    def _wrap_and_join(self, x):
-        return '"{0}"'.format('", "'.join(x))
-
-
-    def _out(self, x):
-        for y in x:
+    def _out(self, arg_list):
+        for y in arg_list:
             print y
 
     ###################
@@ -120,7 +116,7 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-    def repo_show_packages(self, repo_name, package_to_search=None, withDeps = 0, format='compact'):
+    def repo_show_packages(self, repo_name, package_to_search=None, withDeps=0, format='compact'):
         """
         SHOW PACKAGES/SEARCH
         GET /api/repos/:name/packages
@@ -146,15 +142,15 @@ class AptlyApiRequests(object):
                 'withDeps': withDeps,
                 'format': format
             }
-        url =  self.cfg['route_repo'] + repo_name + '/packages'
+        url = self.cfg['route_repo'] + repo_name + '/packages'
 
-        r = requests.get( url, params=param, headers=self.headers)
+        r = requests.get(url, params=param, headers=self.headers)
 #       raise_for_status()
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
         return resp_data
 
-    def repo_edit(self, repo_name, data = None):
+    def repo_edit(self, repo_name, data=None):
         """
         EDIT
         PUT /api/repos/:name
@@ -228,7 +224,7 @@ class AptlyApiRequests(object):
         print json.dumps(resp_data)
         return resp_data
 
-    def repo_add_package_from_upload(self, repo_name, dir_name, file_name = None, params = None):
+    def repo_add_package_from_upload(self, repo_name, dir_name, file_name=None, params=None):
         """
         ADD PACKAGES FROM UPLOADED FILE/DIRECTORY
         POST /api/repos/:name/file/:dir
@@ -355,7 +351,7 @@ class AptlyApiRequests(object):
         Example:
         $ curl http://localhost:8080/api/files
         """
-        r = requests.get(self.cfg['route_file'] , headers=self.headers)
+        r = requests.get(self.cfg['route_file'], headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
@@ -373,7 +369,7 @@ class AptlyApiRequests(object):
         """
 
         f = {
-            'file': open(file,'rb')
+            'file': open(file, 'rb')
         }
 
         r = requests.post(self.cfg['route_file'] + dir_name,
@@ -384,7 +380,7 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-    def file_list(self, dir_name = None):
+    def file_list(self, dir_name=None):
         """
         LIST FILES IN DIRECTORY
         GET /api/files/:dir
@@ -400,7 +396,7 @@ class AptlyApiRequests(object):
         if dir_name is None:
             dir_name = ''
 
-        r = requests.get(self.cfg['route_file'] + dir_name , headers=self.headers)
+        r = requests.get(self.cfg['route_file'] + dir_name, headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
         print json.dumps(resp_data)
@@ -441,7 +437,7 @@ class AptlyApiRequests(object):
     # SNAPSHOT API #
     ################
 
-    def snapshot_list(self, sort = 'time'):
+    def snapshot_list(self, sort='time'):
         """
         LIST
         GET /api/snapshots
@@ -463,7 +459,7 @@ class AptlyApiRequests(object):
         return resp_data
 
 
-    def snapshot_create_from_local_repo(self, snapshot_name, repo_name, description = None):
+    def snapshot_create_from_local_repo(self, snapshot_name, repo_name, description=None):
         """
         CREATE SNAPSHOT FROM LOCAL REPO
         POST /api/repos/:name/snapshots
@@ -496,7 +492,7 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-    def snapshot_create_from_package_refs(self, snapshot_name, source_snapshot_list, package_refs_list, description = None):
+    def snapshot_create_from_package_refs(self, snapshot_name, source_snapshot_list, package_refs_list, description=None):
         """
         CREATE SNAPSHOT FROM PACKAGE REFS
         POST /api/snapshots
@@ -540,7 +536,7 @@ class AptlyApiRequests(object):
 
 
 
-    def snapshot_update(self, old_snapshot_name, new_snapshot_name, description = None):
+    def snapshot_update(self, old_snapshot_name, new_snapshot_name, description=None):
         """
         UPDATE
         PUT /api/snapshots/:name
@@ -591,7 +587,7 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-    def snapshot_delete(self, snapshot_name, force = '0'):
+    def snapshot_delete(self, snapshot_name, force='0'):
         """
         DELETE
         DELETE /api/snapshots/:name
@@ -623,7 +619,7 @@ class AptlyApiRequests(object):
         return resp_data
 
 
-    def snapshot_show_packages(self, snapshot_name, package_to_search = None, withDeps = 0, format = 'compact'):
+    def snapshot_show_packages(self, snapshot_name, package_to_search=None, withDeps=0, format='compact'):
         """
         SHOW PACKAGES/SEARCH
         GET /api/snapshots/:name/packages
@@ -701,7 +697,7 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-    def publish(self, prefix, sources_kind, sources_list, distribution_name, component=None, label = None, origin = None, force_overwrite = None, architectures_list = None):
+    def publish(self, prefix, sources_kind, sources_list, distribution_name, component=None, label=None, origin=None, force_overwrite=None, architectures_list=None):
         """
         PUBLISH SNAPSHOT/LOCAL REPO
         POST /api/publish/:prefix
@@ -788,7 +784,7 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-    def publish_switch(self, prefix, snapshot_list, distribution, component = None, force_overwrite = 0):
+    def publish_switch(self, prefix, snapshot_list, distribution, component=None, force_overwrite=0):
         """
         UPDATE PUBLISHED LOCAL REPO/SWITCH PUBLISHED SNAPSHOT
         PUT /api/publish/:prefix/:distribution
@@ -837,7 +833,7 @@ class AptlyApiRequests(object):
         return resp
 
 
-    def publish_drop(self, prefix, distribution, force = 0):
+    def publish_drop(self, prefix, distribution, force=0):
         """
         DROP PUBLISHED REPOSITORY
         DELETE /api/publish/:prefix/:distribution
@@ -898,7 +894,7 @@ class AptlyApiRequests(object):
     # GRAPH API #
     #############
 
-    def graph(self, file_ext = '.png'):
+    def graph(self, file_ext='.png'):
         """
         GET /api/graph.:ext
         Generate graph of aptly objects ( same as in aptly graph command).

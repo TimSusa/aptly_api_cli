@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
 import sys
 from optparse import OptionParser
 
@@ -164,6 +163,9 @@ def _execute_opts(obj, opts, args):
 
     if opts.repo_create:
         if len(args) >= 3:
+            class data:
+                pass
+
             data.comment = args[0]
             data.default_distribution = args[1]
             data.default_component = args[2]

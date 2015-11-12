@@ -1,6 +1,7 @@
 
 include debian/*
-include aptly_api_cli.py
+include aptly_cli/*
+include aptly_api_cli
 include requirements.txt
 include TODO.md
 include README.md
