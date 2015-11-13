@@ -1,7 +1,5 @@
-#! /bin/bash
+#! /bin/bash -e
 
-set -e
-
-ln -fs /usr/share/python/aptly-cli/bin/aptly-cli $FILE
+ln -fs /usr/share/python/aptly-cli/bin/aptly-cli /usr/bin/aptly-cli
 
 
