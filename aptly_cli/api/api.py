@@ -3,7 +3,6 @@
 
 """ AptlyApiRequests
 Instances of this class will be able to talk
-
 to the Aptly REST API remotely .
 """
 

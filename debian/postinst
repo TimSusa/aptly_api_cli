@@ -2,12 +2,6 @@
 
 set -e
 
-FILE='/usr/bin/aptly-cli'
-if [ -L $FILE ]; then
-   echo "File '$FILE' Exists"
-else
-   echo "The File '$FILE' Does Not Exist...creating symbolic link"
-   ln -fs /usr/share/python/aptly-cli/bin/aptly-cli $FILE
-fi
+ln -fs /usr/share/python/aptly-cli/bin/aptly-cli $FILE
 
 
