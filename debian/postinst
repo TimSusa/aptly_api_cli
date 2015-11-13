@@ -1,5 +1,3 @@
 #! /bin/bash -e
 
 ln -fs /usr/share/python/aptly-cli/bin/aptly-cli /usr/bin/aptly-cli
-
-
