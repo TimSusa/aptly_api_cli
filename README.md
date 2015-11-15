@@ -190,7 +190,7 @@ aptly_api_cli --publish_list
 #### Publish
 Publish snapshot or repository to storage
 ```
-aptly_api_cli --publish=PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION_LIST [COMPONENT] [LABEL] [ORIGIN] [FORCE_OVERWRITE] [ARCHITECTURES_LIST]
+aptly_api_cli --publish=PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION COMPONENT_LIST [LABEL] [ORIGIN] [FORCE_OVERWRITE] [ARCHITECTURES_LIST]
 ```
 
 #### Publish drop

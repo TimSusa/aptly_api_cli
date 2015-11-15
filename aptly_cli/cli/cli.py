@@ -143,9 +143,9 @@ def _get_parser_opts():
                       help='List all available repositories to publish to')
 
     parser.add_option('--publish',
-                      nargs=4,
+                      nargs=5,
                       help='Publish snapshot or repository to storage',
-                      metavar='PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION_LIST [COMPONENT] [LABEL] [ORIGIN] [FORCE_OVERWRITE] [ARCHITECTURES_LIST]')
+                      metavar='PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION COMPONENT_LIST [LABEL] [ORIGIN] [FORCE_OVERWRITE] [ARCHITECTURES_LIST]')
 
     parser.add_option('--publish_drop',
                       nargs=2,
@@ -295,9 +295,9 @@ def _execute_opts(obj, opts, args):
         o = opts.publish
         if len(args) >= 5:
             obj.publish(
-                o[0], o[1], o[2], o[3], args[0], args[1], args[2], args[3], args[4])
+                o[0], o[1], o[2].split(', '), o[3], o[4].split(', '), args[1], args[2], args[3], args[4].split(', '))
         else:
-            obj.publish(o[0], o[1], o[2], o[3])
+            obj.publish(o[0], o[1], o[2].split(', '), o[3], o[4].split(', '))
 
     if opts.publish_switch:
         o = opts.publish_switch

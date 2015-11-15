@@ -117,7 +117,7 @@ class AptlyApiRequests(object):
         print resp_data
         return resp_data
 
-    def repo_show_packages(self, repo_name, package_to_search=None, with_deps=0, detail='compact'):
+    def repo_show_packages(self, repo_name, pkg_to_search=None, with_deps=0, detail='compact'):
         """
         SHOW PACKAGES/SEARCH
         GET /api/repos/:name/packages
@@ -133,14 +133,14 @@ class AptlyApiRequests(object):
         $ curl http://localhost:8080/api/repos/aptly-repo/packages
         """
 
-        if package_to_search is None:
+        if pkg_to_search is None:
             param = {
                 'withDeps': with_deps,
                 'format': detail
             }
         else:
             param = {
-                'q': package_to_search,
+                'q': pkg_to_search,
                 'withDeps': with_deps,
                 'format': detail
             }
@@ -711,7 +711,7 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-    def publish(self, prefix, src_kind, sources_list, dist, comp=None, label=None, orig=None, overwrite=None, arch_list=None):
+    def publish(self, prefix, src_kind, src_list, dist, comp_list, label=None, orig=None, overwrite=None, arch_list=None):
         """
         PUBLISH SNAPSHOT/LOCAL REPO
         POST /api/publish/:prefix
@@ -753,14 +753,8 @@ class AptlyApiRequests(object):
         """
         url = self.cfg['route_pub'] + prefix
 
-        if comp is None:
-            print 'WARNING: Component was not given... setting to main'
-            comp = 'main'
-
         # Prepare list of sources
         sources = []
-        comp_list = comp.split()
-        src_list = sources_list.split()
         if len(comp_list) != len(src_list):
             print "ERROR: sources list and components list should have same length"
             return
@@ -785,7 +779,7 @@ class AptlyApiRequests(object):
                             'Distribution': dist
                         }
         else:
-            print 'fancy publish'
+            print 'multi publish'
             if int(overwrite) <= 0:
                 fo = False
             else:
@@ -795,7 +789,7 @@ class AptlyApiRequests(object):
                 'SourceKind': src_kind,
                 'Sources': sources,
                 'Distribution': dist,
-                'Architectures': arch_list.split(),
+                'Architectures': arch_list,
                 'Label': label,
                 'Origin': orig,
                 'ForceOverwrite': fo
@@ -808,7 +802,7 @@ class AptlyApiRequests(object):
         print resp
         return resp
 
-    def publish_switch(self, prefix, snapshot_list, distribution, component=None, force_overwrite=0):
+    def publish_switch(self, prefix, snapshot_list, dist, component=None, force_overwrite=0):
         """
         UPDATE PUBLISHED LOCAL REPO/SWITCH PUBLISHED SNAPSHOT
         PUT /api/publish/:prefix/:distribution
@@ -832,10 +826,10 @@ class AptlyApiRequests(object):
         else:
             fo = True
 
-        url = self.cfg['route_pub'] + prefix + '/' + distribution
+        url = self.cfg['route_pub'] + prefix + '/' + dist
 
         snap_list_obj = []
-        for x in snapshot_list.split():
+        for x in snapshot_list:
             if component is not None:
                 snap_obj = {
                     'Component': component,
