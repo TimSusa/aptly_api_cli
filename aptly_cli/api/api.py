@@ -126,8 +126,7 @@ class AptlyApiRequests(object):
         Query params:
         q - package query, if missing - return all packages
         withDeps - set to 1 to include dependencies when evaluating package query
-        detail - result format, compact by default ( self, only package keys),
-                 details to return full information about each package ( self, might be slow on large repos)
+        detail - result format, compact by default ( self, only package keys), details to return full information about each package ( self, might be slow on large repos)
 
         Example:
         $ curl http://localhost:8080/api/repos/aptly-repo/packages
