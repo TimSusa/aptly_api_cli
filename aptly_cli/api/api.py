@@ -46,7 +46,8 @@ class AptlyApiRequests(object):
 
         self.headers = {'content-type': 'application/json'}
 
-    def _out(self, arg_list):
+    @classmethod
+    def _out(cls, arg_list):
         """ _out
         Will give beautified output of a list.
         """
@@ -167,7 +168,8 @@ class AptlyApiRequests(object):
         404 repository with such name doesn’t exist
         Response is the same as for GET /api/repos/:name API.
 
-        Example:
+        Example::
+
         $ curl -X PUT -H 'Content-Type: application/json'
         --data '{"DefaultDistribution": "trusty"}' http://localhost:8080/api/repos/local1
         """

@@ -172,7 +172,7 @@ def _execute_opts(obj, opts, args):
     """ _execute_opts
     Execute functions due to options and arguments.
     """
-    class Data:
+    class Data(object):
         """
         Create dat object and use it as argument.
         """
