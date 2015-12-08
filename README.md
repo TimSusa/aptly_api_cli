@@ -1,5 +1,3 @@
-# UNDER CONSTRUCTION!
-
 # aptly_api_cli
 
 ### Why do we need another aptly cli interface?

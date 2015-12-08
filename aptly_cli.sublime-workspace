@@ -232,21 +232,26 @@
 			}
 		},
 		{
-			"contents": "#! /usr/bin/env python\n# -*- coding: utf-8 -*-\n\"\"\" AptlyApiRequests\nInstances of this class will be able to talk\nto the Aptly REST API remotely.\n\"\"\"\n\nimport os\nimport sys\nimport json\nimport requests\n#from requests.exceptions import RequestException\nimp sad\n\n\nclass AptlyApiRequests(object):\n\n    \"\"\" AptlyApiRequests\n    Instances of this class will be able to talk\n    to the Aptly REST API remotely.\n    \"\"\"\n\n    def __init__(self):\n        \"\"\"\n        Pass url and port to the constructor\n        to initialize instance.\n        \"\"\"\n        basic_url = 'http://localhost'\n        port = ':9003'\n        url = basic_url + port\n\n        # self values\n        self.cfg = {\n            # Routes\n            'route_snap': url + '/api/snapshots/',\n            'route_repo': url + '/api/repos/',\n            'route_file': url + '/api/files/',\n            'route_pack': url + '/api/packages/',\n            'route_pub': url + '/api/publish/',\n            'route_graph': url + '/api/graph/',\n            'route_vers': url + '/api/version/',\n\n            # Number of packages to have left\n            'save_last_pkg': 10,\n\n            # Number of snapshots to have left\n            'save_last_snap': 3\n        }\n\n        self.headers = {'content-type': 'application/json'}\n\n    def _out(self, arg_list):\n        for y in arg_list:\n            print y\n\n    ###################\n    # LOCAL REPOS API #\n    ###################\n    def repo_create(self, repo_name, data=None):\n        \"\"\"\n        POST /api/repos\n        Create empty local repository with specified parameters ( see also aptly repo create).\n\n        JSON body params:\n        Name: required, [string] - local repository name\n        Comment: [string] - text describing local repository, for the user\n        DefaultDistribution: [string] - default distribution when publishing from this local repo\n        DefaultComponent: [string] - default component when publishing from this local repo\n\n        HTTP Errors:\n        Code  Description\n        400 repository with such name already exists\n        curl -X POST -H 'Content-Type: application/json' --data '{\"Name\": \"aptly-repo\"}' http://localhost:8080/api/repos\n        \"\"\"\n\n        if data is None:\n            post_data = {\n                'Name': repo_name\n            }\n        else:\n            post_data = {\n                'Name': repo_name,\n                'Comment': data.comment,\n                'DefaultDistribution': data.default_distribution,\n                'DefaultComponent': data.default_component\n            }\n\n        r = requests.post(self.cfg['route_repo'][:-1],\n                          data=json.dumps(post_data),\n                          headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def repo_show(self, repo_name):\n        \"\"\"\n        SHOW\n        GET /api/repos/:name\n        Returns basic information about local repository.\n\n        HTTP Errors:\n        Code  Description\n        404 repository with such name doesn’t exist\n\n        Response:\n        Name:  [string]  local repository name\n        Comment: [string]  text describing local repository, for the user\n        DefaultDistribution: [string]  default distribution when publishing from this local repo\n        DefaultComponent:  [string]  default component when publishing from this local repo\n\n        Example:\n        $ curl http://localhost:8080/api/repos/aptly-repo\n        \"\"\"\n        r = requests.get(\n            self.cfg['route_repo'] + repo_name, headers=self.headers)\n#        r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def repo_show_packages(self, repo_name, package_to_search=None, withDeps=0, format='compact'):\n        \"\"\"\n        SHOW PACKAGES/SEARCH\n        GET /api/repos/:name/packages\n        List all packages in local repository or perform search on repository contents and return result.\n\n        Query params:\n        q - package query, if missing - return all packages\n        withDeps - set to 1 to include dependencies when evaluating package query\n        format - result format, compact by default ( self, only package keys), details to return full information about each package ( self, might be slow on large repos)\n\n        Example:\n        $ curl http://localhost:8080/api/repos/aptly-repo/packages\n        \"\"\"\n\n        if package_to_search is None:\n            param = {\n                'withDeps': withDeps,\n                'format': format\n            }\n        else:\n            param = {\n                'q': package_to_search,\n                'withDeps': withDeps,\n                'format': format\n            }\n        url = self.cfg['route_repo'] + repo_name + '/packages'\n\n        r = requests.get(url, params=param, headers=self.headers)\n#       raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n        return resp_data\n\n    def repo_edit(self, repo_name, data=None):\n        \"\"\"\n        EDIT\n        PUT /api/repos/:name\n        Update local repository meta information.\n\n        JSON body params:\n        Comment: [string]  text describing local repository, for the user\n        DefaultDistribution: [string]  default distribution when publishing from this local repo\n        DefaultComponent:  [string]  default component when publishing from this local repo\n\n        HTTP Errors:\n        Code  Description\n        404 repository with such name doesn’t exist\n        Response is the same as for GET /api/repos/:name API.\n\n        Example:\n        $ curl -X PUT -H 'Content-Type: application/json' --data '{\"DefaultDistribution\": \"trusty\"}' http://localhost:8080/api/repos/local1\n        \"\"\"\n\n        if data is None:\n            data = {}\n        else:\n            data = {\n                'Comment': data.comment,\n                'DefaultDistribution': data.default_distribution,\n                'DefaultComponent': data.default_component\n            }\n\n        r = requests.put(self.cfg['route_repo'] + repo_name,\n                         data=json.dumps(data),\n                         headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def repo_list(self):\n        \"\"\"\n        LIST\n        GET /api/repos\n        Show list of currently available local repositories. Each repository is returned as in “show” API.\n\n        Example:\n        $ curl http://localhost:8080/api/repos\n        \"\"\"\n        r = requests.get(self.cfg['route_repo'], headers=self.headers)\n#        r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n        return resp_data\n\n    def repo_delete(self, repo_name):\n        \"\"\"\n        DELETE\n        DELETE /api/repos/:name\n        Delete local repository.\n        Local repository can’t be deleted if it is published. If local repository has snapshots, aptly would refuse to delete it by default, but that can be overridden with force flag.\n\n        Query params:\n        force when value is set to 1, delete local repository even if it has snapshots\n\n        HTTP Errors:\n        Code  Description\n        404 repository with such name doesn’t exist\n        409 repository can’t be dropped ( self, reason in the message)\n        \"\"\"\n        r = requests.delete(self.cfg['route_repo'] + repo_name,\n                            headers=self.headers)\n#        r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n        return resp_data\n\n    def repo_add_package_from_upload(self, repo_name, dir_name, file_name=None, params=None):\n        \"\"\"\n        ADD PACKAGES FROM UPLOADED FILE/DIRECTORY\n        POST /api/repos/:name/file/:dir\n        POST /api/repos/:name/file/:dir/:file\n        Import packages from files ( uploaded using File Upload API) to the local repository. If directory specified, aptly would discover package files automatically.\n        Adding same package to local repository is not an error.\n        By default aptly would try to remove every successfully processed file and directory :dir ( if it becomes empty after import).\n\n        Query params:\n        noRemove - when value is set to 1, don’t remove any files\n        forceReplace - when value is set to 1, remove packages conflicting with package being added ( in local repository)\n\n        HTTP Errors:\n        404 repository with such name doesn’t exist\n\n        Response:\n        FailedFiles [][string]  list of files that failed to be processed\n        Report  object  operation report ( self, see below)\n\n        Report structure:\n        Warnings - [][string]  list of warnings\n        Added -[][string]  list of messages related to packages being added\n\n        Example ( file upload, add package to repo):\n        $ curl -X POST -F file=@aptly_0.9~dev+217+ge5d646c_i386.deb http://localhost:8080/api/files/aptly-0.9\n        \"\"\"\n        if file_name is None:\n            url = self.cfg['route_repo'] + repo_name + '/file/' + dir_name\n        else:\n            url = self.cfg['route_repo'] + repo_name + \\\n                '/file/' + dir_name + '/' + file_name\n\n        if params is not None:\n            query_param = {\n                'noRemove': param.no_remove,\n                'forceReplace': param.force_replace\n            }\n        else:\n            query_param = {\n                'noRemove': 0,\n                'forceReplace': 0\n            }\n\n        r = requests.post(url,\n                          params=query_param,\n                          headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def repo_add_packages_by_key(self, repo_name, package_key_list):\n        \"\"\"\n        ADD PACKAGES BY KEY\n        POST /api/repos/:name/packages\n        Add packages to local repository by package keys.\n        Any package could be added, it should be part of aptly database ( it could come from any mirror, snapshot, other local repository). This API combined with package list ( search) APIs allows to implement importing, copying, moving packages around.\n        API verifies that packages actually exist in aptly database and checks constraint that conflicting packages can’t be part of the same local repository.\n\n        JSON body params:\n        PackageRefs [][string]  list of package references ( package keys)\n\n        HTTP Errors:\n        Code  Description\n        400 added package conflicts with already exists in repository\n        404 repository with such name doesn’t exist\n        404 package with specified key doesn’t exist\n        Response is the same as for GET /api/repos/:name API.\n\n        Example\n        $ curl -X POST -H 'Content-Type: application/json' --data '{\"PackageRefs\": [\"Psource pyspi 0.6.1-1.4 f8f1daa806004e89\",\"Pi386 libboost-program-options-dev 1.49.0.1 918d2f433384e378\"]}' http://localhost:8080/api/repos/repo2/packages\n        \"\"\"\n        if len(package_key_list) <= 0:\n            print 'No packages were given... aborting'\n            return\n\n        url = self.cfg['route_repo'] + repo_name + '/packages'\n        param = {\n            'PackageRefs': package_key_list\n        }\n        r = requests.post(url, data=json.dumps(param), headers=self.headers)\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def repo_delete_packages_by_key(self, repo_name, package_key_list):\n        \"\"\"\n        DELETE PACKAGES BY KEY\n        DELETE /api/repos/:name/packages\n        Remove packages from local repository by package keys.\n        Any package could be removed from local repository. List package references in local repository could be retrieved with GET /repos/:name/packages.\n\n        JSON body params:\n        PackageRefs [][string]  list of package references ( package keys)\n\n        HTTP Errors:\n        404 repository with such name doesn’t exist\n        Response is the same as for GET /api/repos/:name API.\n\n        Example:\n        $ curl -X DELETE -H 'Content-Type: application/json' --data '{\"PackageRefs\": [\"Pi386 libboost-program-options-dev 1.49.0.1 918d2f433384e378\"]}' http://localhost:8080/api/repos/repo2/packages\n        \"\"\"\n        url = self.cfg['route_repo'] + repo_name + '/packages'\n        data = {\n            'PackageRefs': package_key_list\n        }\n        r = requests.delete(url, data=json.dumps(data), headers=self.headers)\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    ###################\n    # FILE UPLOAD API #\n    ###################\n\n    def file_list_directories(self):\n        \"\"\"\n        LIST DIRECTORIES\n        GET /api/files\n        List all directories.\n        Response: list of directory names.\n\n        Example:\n        $ curl http://localhost:8080/api/files\n        \"\"\"\n        r = requests.get(self.cfg['route_file'], headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n\n    def file_upload(self, dir_name, file):\n        \"\"\"\n        UPLOAD FILE\n        POST /api/files/:dir\n        Parameter :dir is upload directory name. Directory would be created if it doesn’t exist.\n        Any number of files can be uploaded in one call, aptly would preserve filenames. No check is performed if existing uploaded would be overwritten.\n        Response: list of uploaded files as :dir/:file.\n\n        Example:\n        $ curl -X POST -F file=@aptly_0.9~dev+217+ge5d646c_i386.deb http://localhost:8080/api/files/aptly-0.9\n        \"\"\"\n\n        f = {\n            'file': open(file, 'rb')\n        }\n\n        r = requests.post(self.cfg['route_file'] + dir_name,\n                          files=f)\n\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def file_list(self, dir_name=None):\n        \"\"\"\n        LIST FILES IN DIRECTORY\n        GET /api/files/:dir\n        Returns list of files in directory.\n        Response: list of filenames.\n\n        HTTP Errors:\n        404 - directory doesn’t exist\n\n        Example:\n        $ curl http://localhost:8080/api/files/aptly-0.9\n        \"\"\"\n        if dir_name is None:\n            dir_name = ''\n\n        r = requests.get(self.cfg['route_file'] +\n                         dir_name, headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n        return resp_data\n\n    def file_delete_directory(self, dir_name):\n        \"\"\"\n        DELETE DIRECTORY\n        DELETE /api/files/:dir\n        Deletes all files in upload directory and directory itself.\n\n        Example:\n        $ curl -X DELETE http://localhost:8080/api/files/aptly-0.9\n        \"\"\"\n        r = requests.delete(\n            self.cfg['route_file'] + dir_name, headers=self.headers)\n#        r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n        return resp_data\n\n    def file_delete(self, dir_name, file_name):\n        \"\"\"\n        DELETE FILE IN DIRECTORY\n        DELETE /api/files/:dir/:file\n        Delete single file in directory.\n\n        Example:\n        $ curl -X DELETE http://localhost:8080/api/files/aptly-0.9/aptly_0.9~dev+217+ge5d646c_i386.deb\n        \"\"\"\n        r = requests.delete(\n            self.cfg['route_file'] + dir_name + '/' + file_name, headers=self.headers)\n#        r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print json.dumps(resp_data)\n        return resp_data\n\n    ################\n    # SNAPSHOT API #\n    ################\n\n    def snapshot_list(self, sort='time'):\n        \"\"\"\n        LIST\n        GET /api/snapshots\n        Return list of all snapshots created in the system.\n\n        Query params:\n        sort  snapshot order, defaults to name, set to time to display in creation order\n\n        Example:\n        $ curl -v http://localhost:8080/api/snapshots\n        \"\"\"\n        params = {\n            'sort': sort\n        }\n        r = requests.get(self.cfg['route_snap'],\n                         headers=self.headers, params=params)\n#        r.raise_for_status()\n        resp_data = json.loads(r.content)\n        self._out(resp_data)\n        return resp_data\n\n    def snapshot_create_from_local_repo(self, snapshot_name, repo_name, description=None):\n        \"\"\"\n        CREATE SNAPSHOT FROM LOCAL REPO\n        POST /api/repos/:name/snapshots\n        Create snapshot of current local repository :name contents as new snapshot with name :snapname.\n\n        JSON body params:\n        Name -  [string], required  snapshot name\n        Description - [string]  free-format description how snapshot has been created\n\n        HTTP Errors:\n        Code  Description\n        400 snapshot with name Name already exists\n        404 local repo with name :name doesn’t exist\n\n        Example:\n        $ curl -X POST -H 'Content-Type: application/json' --data '{\"Name\":\"snap9\"}' http://localhost:8080/api/repos/local-repo/snapshots\n        \"\"\"\n        url = self.cfg['route_repo'] + repo_name + '/snapshots'\n        if description is None:\n            description = 'Description for ' + snapshot_name\n\n        data = {\n            'Name': snapshot_name,\n            'Description': description\n        }\n\n        r = requests.post(url, data=json.dumps(data), headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def snapshot_create_from_package_refs(self, snapshot_name, source_snapshot_list, package_refs_list, description=None):\n        \"\"\"\n        CREATE SNAPSHOT FROM PACKAGE REFS\n        POST /api/snapshots\n        Create snapshot from list of package references.\n        This API creates snapshot out of any list of package references. Package references could be obtained from other snapshots, local repos or mirrors.\n\n        Name - [string], required  snapshot name\n        Description - [string]  free-format description how snapshot has been created\n        SourceSnapshots - [][string]  list of source snapshot names (only for tracking purposes)\n        PackageRefs - [][string]  list of package keys which would be contents of the repository\n        Sending request without SourceSnapshots and PackageRefs would create empty snapshot.\n\n        HTTP Errors:\n        400 snapshot with name Name already exists, package conflict\n        404 source snapshot doesn’t exist, package doesn’t exist\n\n        Example:\n        $ curl -X POST -H 'Content-Type: application/json' --data '{\"Name\":\"empty\"}' http://localhost:8080/api/snapshots\n        $ curl -X POST -H 'Content-Type: application/json' --data '{\"Name\":\"snap10\", \"SourceSnapshots\": [\"snap9\"], \"Description\": \"Custom\", \"PackageRefs\": [\"Psource pyspi 0.6.1-1.3 3a8b37cbd9a3559e\"]}'  http://localhost:8080/api/snapshots\n        \"\"\"\n        url = self.cfg['route_snap'][:-1]\n        if description is None:\n            description = 'Description for ' + snapshot_name\n\n        print snapshot_name\n        print description\n        print source_snapshot_list\n        print package_refs_list\n        data = {\n            'Name': snapshot_name,\n            'Description': description,\n            'SourceSnapshots': source_snapshot_list,\n            'PackageRefs': package_refs_list\n        }\n\n        r = requests.post(url, data=json.dumps(data), headers=self.headers)\n        # r.raise_for_status()\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def snapshot_update(self, old_snapshot_name, new_snapshot_name, description=None):\n        \"\"\"\n        UPDATE\n        PUT /api/snapshots/:name\n        Update snapshot’s description or name.\n\n        JSON body params:\n        Name - [string]  new snapshot name\n        Description - [string]  free-format description how snapshot has been created\n\n        HTTP Errors:\n        404 snapshot with such name doesn’t exist\n        409 rename is not possible: name already used by another snapshot\n\n        Example:\n        $ curl -X PUT -H 'Content-Type: application/json' --data '{\"Name\": \"snap-wheezy\"}' http://localhost:8080/api/snapshots/snap1\n        \"\"\"\n        url = self.cfg['route_snap'] + old_snapshot_name\n        if description is None:\n            description = 'Description for ' + new_snapshot_name\n\n        data = {\n            'Name': new_snapshot_name,\n            'Description': description\n        }\n\n        r = requests.put(url, data=json.dumps(data), headers=self.headers)\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def snapshot_show(self, snapshot_name):\n        \"\"\"\n        SHOW\n        GET /api/snapshots/:name\n        Get information about snapshot by name.\n\n        HTTP Errors:\n        Code  Description\n        404 snapshot with such name doesn’t exist\n\n        Example:\n        $ curl http://localhost:8080/api/snapshots/snap1\n        \"\"\"\n        url = self.cfg['route_snap'] + snapshot_name\n        r = requests.get(url, headers=self.headers)\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def snapshot_delete(self, snapshot_name, force='0'):\n        \"\"\"\n        DELETE\n        DELETE /api/snapshots/:name\n        Delete snapshot. Snapshot can’t be deleted if it is published. aptly would refuse to delete snapshot if it has been used as source to create other snapshots, but that could be overridden with force parameter.\n\n        Query params:\n        force -  when value is set to 1, delete snapshot even if it has been used as source snapshot\n\n        HTTP Errors:\n        404 snapshot with such name doesn’t exist\n        409 snapshot can’t be dropped (reason in the message)\n\n        Example:\n        $ curl -X DELETE http://localhost:8080/api/snapshots/snap-wheezy\n        $ curl -X DELETE 'http://localhost:8080/api/snapshots/snap-wheezy?force=1'\n        \"\"\"\n        url = self.cfg['route_snap'] + snapshot_name\n        if force == '1':\n            print 'Forcing removal of snapshot'\n\n        param = {\n            'force': force\n        }\n\n        r = requests.delete(url, params=param, headers=self.headers)\n        print r.url\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def snapshot_show_packages(self, snapshot_name, package_to_search=None, withDeps=0, format='compact'):\n        \"\"\"\n        SHOW PACKAGES/SEARCH\n        GET /api/snapshots/:name/packages\n        List all packages in snapshot or perform search on snapshot contents and return result.\n\n        Query params:\n        q - package query, if missing - return all packages\n        withDeps - set to 1 to include dependencies when evaluating package query\n        format - result format, compact by default ( only package keys), details to return full information about each package ( might be slow on large snapshots)\n\n        Example:\n        $ curl http://localhost:8080/api/snapshots/snap2/packages\n        $ curl  http://localhost:8080/api/snapshots/snap2/packages?q='Name%20( ~%20matlab)'\n        \"\"\"\n        url = self.cfg['route_snap'] + snapshot_name + '/packages'\n\n        if package_to_search is None:\n            param = {\n                'withDeps': withDeps,\n                'format': format\n            }\n        else:\n            param = {\n                'q': package_to_search,\n                'withDeps': withDeps,\n                'format': format\n            }\n\n        r = requests.get(url, params=param, headers=self.headers)\n        resp_data = json.loads(r.content)\n        print resp_data\n        return resp_data\n\n    def snapshot_diff(self, snapshot_left, snapshot_right):\n        \"\"\"\n        DIFFERENCE BETWEEN SNAPSHOTS\n        GET /api/snapshots/:name/diff/:withSnapshot\n        Calculate difference between two snapshots :name (left) and :withSnapshot (right).\n        Response is a list of elements:\n\n        Left - package reference present only in left snapshot\n        Right - package reference present only in right snapshot\n\n        If two snapshots are identical, response would be empty list.\n        null -  package reference right -  snapshot has package missing in left\n        package reference -  null -  left snapshot has package missing in right\n        package reference - package reference snapshots have different packages\n\n        Example:\n        $ curl http://localhost:8080/api/snapshots/snap2/diff/snap3\n        \"\"\"\n        url = self.cfg['route_snap'] + \\\n            snapshot_left + '/diff/' + snapshot_right\n        r = requests.get(url, headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    ###############\n    # PUBLISH API #\n    ###############\n\n    def publish_list(self):\n        \"\"\"\n        LIST\n        GET /api/publish\n        List published repositories.\n\n        Example:\n        $ curl http://localhost:8080/api/publish\n        \"\"\"\n        url = self.cfg['route_pub']\n        r = requests.get(url, headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    def publish(self, prefix, sources_kind, sources_list, distribution_name, component=None, label=None, origin=None, force_overwrite=None, architectures_list=None):\n        \"\"\"\n        PUBLISH SNAPSHOT/LOCAL REPO\n        POST /api/publish/:prefix\n        Publish local repository or snapshot under specified prefix. Storage might be passed in prefix as well, e.g. s3:packages/. To supply empty prefix, just remove last part (POST /api/publish)\n\n        JSON body params:\n        SourceKind - [string], required  source kind: local for local repositories and snapshot for snapshots\n        Sources -[]Source, required  list of Component/Name objects, Name is either local repository or snpashot name\n        Distribution - [string]  distribution name, if missing aptly would try to guess from sources\n        Label [string] - value of Label: field in published repository stanza\n        Origin  [string] - value of Origin: field in published repository stanza\n        ForceOverwrite - bool  when publishing, overwrite files in pool/ directory without notice\n        Architectures - [][string]  override list of published architectures\n\n        Notes on Sources field:\n        when publishing single component repository, Component may be omitted, it would be guessed from source or set to default value main\n        for multiple component published repository, Component would be guessed from source if not set\n        GPG signing would happen in aptly server, using local to server gpg binary, keyrings.\n        It’s not possible to configure publishing endpoints via API, they should be set in configuration and require aptly server restart.\n\n        HTTP errors:\n        400 prefix/distribution is already used by another published repository\n        404 source snapshot/repo hasn’t been found\n\n        Example:\n        $ curl -X POST -H 'Content-Type: application/json' --data '{\"SourceKind\": \"local\", \"Sources\": [{\"Name\": \"local-repo\"}], \"Architectures\": [\"i386\", \"amd64\"], \"Distribution\": \"wheezy\"}' http://localhost:8080/api/publish\n        $ curl -X POST -H 'Content-Type: application/json' --data '{\"SourceKind\": \"local\", \"Sources\": [{\"Name\": \"0XktRe6qMFp4b8C\", \"Component\": \"contrib\"}, {\"Name\": \"EqmoTZiVx8MGN65\", \"Component\": \"non-free\"}], \"Architectures\": [\"i386\", \"amd64\"], \"Distribution\": \"wheezy\"}' http://localhost:8080/api/publish/debian_testing/\n        \"\"\"\n        url = self.cfg['route_pub'] + prefix\n\n        if component is None:\n            print 'WARNING: Component was not given... setting to main'\n            component = 'main'\n\n        # Prepare list of sources\n        sources = []\n        comp_list = component.split()\n        list = sources_list.split()\n        if len(comp_list) != len(list):\n            print \"ERROR: sources list and components list should have same length\"\n            return\n\n        for x in list:\n            for y in comp_list:\n                row = {\n                    'Name': x,\n                    'Component': y\n                }\n        sources.append(row)\n\n        dat = {}\n        if label is None:\n            if origin is None:\n                if force_overwrite is None:\n                    if architectures_list is None:\n                        print 'simple publish'\n                        dat = {\n                            'SourceKind': sources_kind,\n                            'Sources': sources,\n                            'Distribution': distribution_name\n                        }\n        else:\n            print 'fancy publish'\n            if int(force_overwrite) <= 0:\n                fo = False\n            else:\n                fo = True\n            print fo\n            dat = {\n                'SourceKind': sources_kind,\n                'Sources': sources,\n                'Distribution': distribution_name,\n                'Architectures': architectures_list.split(),\n                'Label': label,\n                'Origin': origin,\n                'ForceOverwrite': fo\n            }\n\n        print dat\n        r = requests.post(url, data=json.dumps(dat), headers=self.headers)\n        print r.url\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    def publish_switch(self, prefix, snapshot_list, distribution, component=None, force_overwrite=0):\n        \"\"\"\n        UPDATE PUBLISHED LOCAL REPO/SWITCH PUBLISHED SNAPSHOT\n        PUT /api/publish/:prefix/:distribution\n        API action depends on published repository contents:\n        if local repository has been published, published repository would be updated to match local repository contents\n        if snapshots have been been published, it is possible to switch each component to new snapshot\n\n        JSON body params:\n        Snapshots - []Source  only when updating published snapshots, list of objects Component/Name\n        ForceOverwrite - bool  when publishing, overwrite files in pool/ directory without notice\n\n        Example:\n        $ curl -X PUT -H 'Content-Type: application/json' --data '{\"Snapshots\": [{\"Component\": \"main\", \"Name\": \"8KNOnIC7q900L5v\"}]}' http://localhost:8080/api/publish//wheezy\n        \"\"\"\n        if prefix is None:\n            prefix = ''\n\n        if int(force_overwrite) <= 0:\n            fo = False\n        else:\n            fo = True\n\n        url = self.cfg['route_pub'] + prefix + '/' + distribution\n\n        snap_list_obj = []\n        for x in snapshot_list.split():\n            if component is not None:\n                snap_obj = {\n                    'Component': component,\n                    'Name': x\n                }\n            else:\n                snap_obj = {\n                    'Name': x\n                }\n            snap_list_obj.append(snap_obj)\n        print snap_list_obj\n        data = {\n            'Snapshots': snap_list_obj,\n            'ForceOverwrite': fo\n        }\n        r = requests.put(url, data=json.dumps(data), headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    def publish_drop(self, prefix, distribution, force=0):\n        \"\"\"\n        DROP PUBLISHED REPOSITORY\n        DELETE /api/publish/:prefix/:distribution\n        Delete published repository, clean up files in published directory.\n\n        Query params:\n        force -  force published repository removal even if component cleanup fails\n        Usually ?force=1 isn’t required, but if due to some corruption component cleanup fails, ?force=1 could be used to drop published repository. This might leave some published repository files left under public/ directory.\n\n        Example:\n        $ curl -X DELETE http://localhost:8080/api/publish//wheezy\n        \"\"\"\n\n        url = self.cfg['route_pub'] + prefix + '/' + distribution\n\n        param = {\n            'force': force\n        }\n\n        r = requests.delete(url, params=param, headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    ###############\n    # PACKAGE API #\n    ###############\n\n    def package_show_by_key(self, package_key):\n        \"\"\"\n        SHOW\n        GET /api/packages/:key\n        Show information about package by package key.\n        Package keys could be obtained from various GET .../packages APIs.\n\n        Response:\n        Key - [sitring]  package key (unique package identifier)\n        ShortKey - [string]  short package key (should be unique in one package list: snapshot, mirror, local repository)\n        FilesHash - [string]  hash of package files\n        Package Stanza Fields - [string]  all package stanza fields, e.g. Package, Architecture, …\n\n        HTTP Errors:\n        Code  Description\n        404 package with such key doesn’t exist\n\n        Example:\n        $ curl http://localhost:8080/api/packages/'Pi386%20libboost-program-options-dev%201.49.0.1%20918d2f433384e378'\n        Hint: %20 is url-encoded space.\n        \"\"\"\n        url = self.cfg['route_pack'] + package_key\n        r = requests.get(url, headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    #############\n    # GRAPH API #\n    #############\n\n    def graph(self, file_ext='.png'):\n        \"\"\"\n        GET /api/graph.:ext\n        Generate graph of aptly objects ( same as in aptly graph command).\n        :ext specifies desired file extension, e.g. .png, .svg.\n\n        Example:\n        open url http://localhost:8080/api/graph.svg in browser (hint: aptly database should be non-empty)\n        \"\"\"\n        url = self.cfg['route_graph'][:-1] + file_ext\n        print url\n        r = requests.get(url, headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n\n    ###############\n    # VERSION API #\n    ###############\n\n    def get_version(self):\n        \"\"\"\n        GET /api/version\n        Return current aptly version.\n\n        Example:\n        $ curl http://localhost:8080/api/version\n        \"\"\"\n        url = self.cfg['route_vers']\n        r = requests.get(url, headers=self.headers)\n        resp = json.loads(r.content)\n        print resp\n        return resp\n",
 			"file": "aptly_cli/api/api.py",
-			"file_size": 34186,
-			"file_write_time": 130918119400000000,
 			"settings":
 			{
-				"buffer_size": 34225,
+				"buffer_size": 33959,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/timsusa/Library/Application Support/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+			"file": "README.md",
 			"settings":
 			{
-				"buffer_size": 3858,
+				"buffer_size": 5920,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "aptly_cli/cli/cli.py",
+			"settings":
+			{
+				"buffer_size": 10779,
 				"line_ending": "Unix"
 			}
 		}
@@ -525,10 +530,17 @@
 	[
 		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli",
 		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli/aptly_cli",
-		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli/aptly_cli/api"
+		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli/aptly_cli/api",
+		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli/aptly_cli/cli",
+		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli/debian"
 	],
 	"file_history":
 	[
+		"/Users/timsusa/Library/Application Support/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+		"/Users/timsusa/data/development/masterhoshi/aptly_api_cli/debian/postinst",
+		"/Users/timsusa/.screenrc",
+		"/Users/timsusa/.bash_profile",
+		"/Users/timsusa/data/development/masterhoshi/lambdanow-tools/README_APTLY.md",
 		"/Users/timsusa/Library/Application Support/Sublime Text 3/Packages/User/pep8_autoformat.sublime-settings",
 		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/templates/dialogs/payment.confirm.html",
 		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/scripts/controllers/dataProcTutorialCtrl.js",
@@ -651,16 +663,11 @@
 		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/templates/dialogs/schema.remove.confirm.html",
 		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/templates/dialogs/schema.save.confirm.html",
 		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/scripts/controllers/markdownViewCtrl.js",
-		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/scripts/controllers/TutorialDataProcCtrl.js",
-		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/scripts/controllers/clusterListCtrl.js",
-		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/templates/views/markdown.html",
-		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/assets/lang/tutorial-en.md",
-		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/protractor.conf.staging.js",
-		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/assets/lang/tutorial-de.md"
+		"/Users/timsusa/data/development/masterhoshi/lambdanow-frontend/app/scripts/controllers/TutorialDataProcCtrl.js"
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 46.0
 	},
 	"find_in_files":
 	{
@@ -747,6 +754,7 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"python aptly_api_cli.py",
 			"type",
 			"_get_parser",
 			"args",
@@ -873,8 +881,7 @@
 			"\"landing-page\":",
 			"\"ssh\":",
 			"/html/body/div/div/div/div/div[2]/div/div/div/form/div[3]/fieldset/div[2]/div/div/div[2]",
-			"DataProcTutorialCtrl",
-			"ng-controller"
+			"DataProcTutorialCtrl"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -882,6 +889,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"aptly_api_cli",
 			"        print resp_data\n        return resp_data",
 			")",
 			"( self, ",
@@ -1008,8 +1016,7 @@
 			"$color-input-16",
 			"$color-input-15",
 			"$color-input-14",
-			"$color-input-13",
-			"$color-input-12"
+			"$color-input-13"
 		],
 		"reverse": false,
 		"show_context": false,
@@ -1020,7 +1027,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -1045,26 +1052,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
@@ -1075,34 +1072,135 @@
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_unmatched_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content"
 							],
+							"color_scheme": "Packages/User/Color Highlighter/themes/predawn (SL).tmTheme",
 							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext).tmLanguage",
 							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "aptly_cli/api/api.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 33959,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content"
+							],
+							"color_scheme": "Packages/User/Color Highlighter/themes/predawn (SL).tmTheme",
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -1113,20 +1211,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "aptly_cli/api/api.py",
+					"buffer": 2,
+					"file": "README.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 34225,
+						"buffer_size": 5920,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								257,
-								257
+								760,
+								760
 							]
 						],
 						"settings":
@@ -1134,26 +1232,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
@@ -1164,58 +1252,67 @@
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_unmatched_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content"
 							],
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"color_scheme": "Packages/User/Color Highlighter/themes/predawn (SL).tmTheme",
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 71.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "/Users/timsusa/Library/Application Support/Sublime Text 3/Packages/User/SublimeLinter.sublime-settings",
+					"buffer": 3,
+					"file": "aptly_cli/cli/cli.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3858,
+						"buffer_size": 10779,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2071,
-								2071
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1223,26 +1320,16 @@
 							"BracketHighlighterBusy": false,
 							"bh_regions":
 							[
-								"bh_double_quote",
-								"bh_double_quote_center",
-								"bh_double_quote_open",
-								"bh_double_quote_close",
-								"bh_double_quote_content",
-								"bh_tag",
-								"bh_tag_center",
-								"bh_tag_open",
-								"bh_tag_close",
-								"bh_tag_content",
-								"bh_c_define",
-								"bh_c_define_center",
-								"bh_c_define_open",
-								"bh_c_define_close",
-								"bh_c_define_content",
-								"bh_regex",
-								"bh_regex_center",
-								"bh_regex_open",
-								"bh_regex_close",
-								"bh_regex_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
 								"bh_single_quote",
 								"bh_single_quote_center",
 								"bh_single_quote_open",
@@ -1253,38 +1340,49 @@
 								"bh_curly_open",
 								"bh_curly_close",
 								"bh_curly_content",
-								"bh_round",
-								"bh_round_center",
-								"bh_round_open",
-								"bh_round_close",
-								"bh_round_content",
-								"bh_angle",
-								"bh_angle_center",
-								"bh_angle_open",
-								"bh_angle_close",
-								"bh_angle_content",
-								"bh_square",
-								"bh_square_center",
-								"bh_square_open",
-								"bh_square_close",
-								"bh_square_content",
 								"bh_default",
 								"bh_default_center",
 								"bh_default_open",
 								"bh_default_close",
 								"bh_default_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
 								"bh_unmatched",
 								"bh_unmatched_center",
 								"bh_unmatched_open",
 								"bh_unmatched_close",
-								"bh_unmatched_content"
+								"bh_unmatched_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content"
 							],
-							"syntax": "Packages/JavaScriptNext - ES6 Syntax/JSON (JavaScriptNext).tmLanguage",
-							"tab_size": 4,
+							"color_scheme": "Packages/User/Color Highlighter/themes/predawn (SL).tmTheme",
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1075.0,
+						"translation.y": 2120.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
