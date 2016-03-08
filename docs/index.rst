@@ -15,6 +15,7 @@ Contents:
 
    api
    cli
+   util
 
 
 Indices and tables

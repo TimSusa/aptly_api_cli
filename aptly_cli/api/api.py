@@ -52,7 +52,7 @@ class AptlyApiRequests(object):
         Will give beautified output of a list.
         """
         for y in arg_list:
-            print y
+            print json.dumps(y, indent=2)
 
     ###################
     # LOCAL REPOS API #
@@ -127,7 +127,7 @@ class AptlyApiRequests(object):
         Query params:
         q - package query, if missing - return all packages
         withDeps - set to 1 to include dependencies when evaluating package query
-        detail - result format, compact by default ( self, only package keys), details to return full information about each package ( self, might be slow on large repos)
+        detail - result format, compact by default ( only package keys), details to return full information about each package ( might be slow on large repos)
 
         Example:
         $ curl http://localhost:8080/api/repos/aptly-repo/packages
@@ -473,7 +473,7 @@ class AptlyApiRequests(object):
                          headers=self.headers, params=params)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
-        self._out(resp_data)
+        # self._out(resp_data)
         return resp_data
 
     def snapshot_create_from_local_repo(self, snapshot_name, repo_name, description=None):
@@ -690,7 +690,7 @@ class AptlyApiRequests(object):
             snapshot_left + '/diff/' + snapshot_right
         r = requests.get(url, headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     ###############

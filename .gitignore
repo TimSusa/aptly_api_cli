@@ -58,3 +58,4 @@ target/
 *.DS_Store
 *.sublime-project
 *.sublime-workspace
+aptly_cli.sublime-workspace

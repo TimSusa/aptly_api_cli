@@ -6,19 +6,23 @@ The CLI with option parser
 """
 
 import sys
+import json
 from optparse import OptionParser
 
 from aptly_cli.api.api import AptlyApiRequests
+from aptly_cli.util.util import Util
 
 
 def main():
     """
     Main entry point for cli.
     """
+    util = Util()
+
     obj = AptlyApiRequests()
     parser = _get_parser_opts()
     (opts, args) = parser.parse_args()
-    _execute_opts(obj, opts, args)
+    _execute_opts(obj, opts, args, util)
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -165,10 +169,19 @@ def _get_parser_opts():
                       nargs=1,
                       help='Show packages by key',
                       metavar='PACKAGE_KEY')
+
+    parser.add_option('--diff_both_last_snapshots_mirrors',
+                      action='store_true',
+                      help='Sorts list of snapshots and makes a diff between the last two.')
+
+    parser.add_option('--get_last_snapshots',
+                      nargs=2,
+                      help='Returns the last n snapshots by prefix or optional postfix.',
+                      metavar='PREFIX NR_OF_VERS [POSTFIX]')
     return parser
 
 
-def _execute_opts(obj, opts, args):
+def _execute_opts(obj, opts, args, util):
     """ _execute_opts
     Execute functions due to options and arguments.
     """
@@ -274,12 +287,12 @@ def _execute_opts(obj, opts, args):
 
     if opts.snapshot_list:
         if len(args) >= 1:
-            obj.snapshot_list(args[0])
+            print json.dumps(obj.snapshot_list(args[0]), indent=2)
         else:
-            obj.snapshot_list()
+            print json.dumps(obj.snapshot_list(), indent=2)
 
     if opts.snapshot_diff:
-        obj.snapshot_diff(opts.snapshot_diff[0], opts.snapshot_diff[1])
+        print json.dumps(obj.snapshot_diff(opts.snapshot_diff[0], opts.snapshot_diff[1]), indent=2)
 
     if opts.snapshot_delete:
         if len(args) >= 1:
@@ -318,6 +331,23 @@ def _execute_opts(obj, opts, args):
 
     if opts.get_version:
         obj.get_version()
+
+    if opts.diff_both_last_snapshots_mirrors:
+        # package prefix, reponame
+        util.diff_both_last_snapshots_mirrors()
+
+    if opts.get_last_snapshots:
+        o = opts.get_last_snapshots
+        if len(args) >= 1:
+            res = util.get_last_snapshots(o[0], o[1], args[0])
+        else:
+            res = util.get_last_snapshots(o[0], o[1])
+
+        if len(res) == 1:
+            print ''.join(res)
+        else:
+            print json.dumps(res, indent=2)
+
 
 if __name__ == "__main__":
     sys.exit(main())
