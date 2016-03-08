@@ -85,29 +85,24 @@ class Util(object):
         """ diff_both_last_snapshots_mirrors
         DEsc
         """
-        prefix_list = ['cloudera', 'erlang', 'mongodb', 'mongodb2', 'nginx', 'puppetmaster',
-                       'rabbitmq', 'redis', 'saltstack2014.7', 'saltstack2015.5', 'saltstack', 'git']
+        local_cfg = self.api.get_config_from_file()
+        prefix_list = local_cfg['prefixes_mirrors'].split(', ')
+
         snaplist = self.api.snapshot_list()
         results = []
         result = ""
-        # print "go into loop..."
+
         for x in prefix_list:
-            # print "sort out for prefix..."
-            # print x
             res_list = self._sort_out_last_n_snap(snaplist, x, 2)
             if len(res_list) >= 2:
-                # print "Diff..."
                 res = self.api.snapshot_diff(res_list[0], res_list[1])
                 if not res:
                     results.append("EMPTY")
                 else:
                     results.append(res)
-                    # print "Found..."
-                    # print res
                     break
             else:
                 results.append("EMPTY")
-                # print "Nothing to diff..."
 
         # print results
         result = ""
@@ -133,7 +128,7 @@ class Util(object):
             print 'Create_init_file'
             try:
                 conf = open(name, 'a')   # Trying to create a new file if it does not exist
-                conf.write('# aptly-cli config file\n[general]\nbasic_url=http://localhost\nport=:9003\n')
+                conf.write('[general]\nbasic_url=http://localhost\nport=:9003\n')
                 conf.close()
 
             except:

@@ -9,7 +9,6 @@ to the Aptly REST API remotely .
 import json
 import requests
 import os
-# import sys
 from ConfigParser import ConfigParser
 
 
@@ -26,7 +25,7 @@ class AptlyApiRequests(object):
         to initialize instance.
         """
         self.configfile = None
-        cfg_file = self._get_config_from_file()
+        cfg_file = self.get_config_from_file()
 
         if cfg_file is not None:
             basic_url = cfg_file['basic_url']
@@ -35,6 +34,8 @@ class AptlyApiRequests(object):
             basic_url = 'http://localhost'
             port = ':9003'
             print "No Config file found, take default values"
+
+        self.headers = {'content-type': 'application/json'}
 
         url = basic_url + port
 
@@ -56,8 +57,6 @@ class AptlyApiRequests(object):
             'save_last_snap': 3
         }
 
-        self.headers = {'content-type': 'application/json'}
-
     @staticmethod
     def _out(arg_list):
         """ _out
@@ -66,7 +65,7 @@ class AptlyApiRequests(object):
         for y in arg_list:
             print json.dumps(y, indent=2)
 
-    def _get_config_from_file(self):
+    def get_config_from_file(self):
         """
         Returns a dictonary of config values read out from file
         """
@@ -79,7 +78,8 @@ class AptlyApiRequests(object):
         else:
             cfg_file = {
                 'basic_url': config_file.get('general', 'basic_url'),
-                'port': config_file.get('general', 'port')
+                'port': config_file.get('general', 'port'),
+                'prefixes_mirrors': config_file.get('general', 'prefixes_mirrors')
             }
 
         return cfg_file
