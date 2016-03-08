@@ -189,6 +189,10 @@ def _get_parser_opts():
                       help='Cleans the last n snapshots by prefix or optional postfix.',
                       metavar='PREFIX NR_OF_VERS [POSTFIX]')
 
+    parser.add_option('--list_repos_and_packages',
+                      action='store_true',
+                      help='List all repos with their containing packages.')
+
     parser.add_option('--diff_both_last_snapshots_mirrors',
                       action='store_true',
                       help='Sorts list of snapshots and makes a diff between the last two.')
@@ -207,7 +211,8 @@ def _execute_opts(obj, opts, args, util):
             pass
 
     if opts.repo_list:
-        obj.repo_list()
+        resp = obj.repo_list()
+        print json.dumps(resp, indent=2)
 
     if opts.repo_create:
         if len(args) >= 3:
@@ -219,11 +224,13 @@ def _execute_opts(obj, opts, args, util):
             obj.repo_create(opts.repo_create)
 
     if opts.repo_show_packages:
+        resp = None
         if len(args) >= 3:
-            obj.repo_show_packages(
+            resp = obj.repo_show_packages(
                 opts.repo_show_packages, args[0], args[1], args[2])
         else:
-            obj.repo_show_packages(opts.repo_show_packages)
+            resp = obj.repo_show_packages(opts.repo_show_packages)
+        print json.dumps(resp, indent=2)
 
     if opts.repo_show:
         obj.repo_show(opts.repo_show)
@@ -374,6 +381,10 @@ def _execute_opts(obj, opts, args, util):
     if opts.diff_both_last_snapshots_mirrors:
         # package prefix, reponame
         util.diff_both_last_snapshots_mirrors()
+
+    if opts.list_repos_and_packages:
+        # package prefix, reponame
+        util.list_all_repos_and_packages()
 
 if __name__ == "__main__":
     sys.exit(main())

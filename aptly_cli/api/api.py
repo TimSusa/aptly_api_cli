@@ -65,7 +65,8 @@ class AptlyApiRequests(object):
         for y in arg_list:
             print json.dumps(y, indent=2)
 
-    def get_config_from_file(self):
+    @staticmethod
+    def get_config_from_file():
         """
         Returns a dictonary of config values read out from file
         """
@@ -175,12 +176,12 @@ class AptlyApiRequests(object):
                 'withDeps': with_deps,
                 'format': detail
             }
-        url = self.cfg['route_repo'] + repo_name + '/packages'
+        url = str(self.cfg['route_repo']) + str(repo_name) + '/packages'
 
         r = requests.get(url, params=param, headers=self.headers)
 #       raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
         return resp_data
 
     def repo_edit(self, repo_name, data=None):
@@ -234,7 +235,7 @@ class AptlyApiRequests(object):
         r = requests.get(self.cfg['route_repo'], headers=self.headers)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
         return resp_data
 
     def repo_delete(self, repo_name):

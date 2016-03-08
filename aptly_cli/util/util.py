@@ -111,6 +111,7 @@ class Util(object):
         if len(items_to_delete) > nr_to_left_over:
             for item in items_to_delete[:-nr_to_left_over]:
                 if item:
+                    # force removal
                     self.api.snapshot_delete(item, '1')
 
     def diff_both_last_snapshots_mirrors(self):
@@ -147,3 +148,16 @@ class Util(object):
                 break
 
         print result
+
+    def list_all_repos_and_packages(self):
+        """
+        """
+        repos = self.api.repo_list()
+        # print repos
+        for repo in repos:
+            print repo[u'Name']
+            packs = self.api.repo_show_packages(repo[u'Name'])
+            for pack in packs:
+                print pack.split(', ')
+            # [1] + packs[2]
+
