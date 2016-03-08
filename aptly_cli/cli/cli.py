@@ -193,6 +193,11 @@ def _get_parser_opts():
                       action='store_true',
                       help='List all repos with their containing packages.')
 
+    parser.add_option('--get_last_packages',
+                      nargs=3,
+                      help='Returns the last n packages by reponame, prefix or optional postfix.',
+                      metavar='REPO_NAME PREFIX NR_OF_VERS [POSTFIX]')
+
     parser.add_option('--diff_both_last_snapshots_mirrors',
                       action='store_true',
                       help='Sorts list of snapshots and makes a diff between the last two.')
@@ -385,6 +390,18 @@ def _execute_opts(obj, opts, args, util):
     if opts.list_repos_and_packages:
         # package prefix, reponame
         util.list_all_repos_and_packages()
+
+    if opts.get_last_packages:
+        o = opts.get_last_packages
+        if len(args) >= 1:
+            res = util.get_last_packages(o[0], o[1], o[2], args[0])
+        else:
+            res = util.get_last_packages(o[0], o[1], o[2])
+
+        # if len(res) == 1:
+        #     print ''.join(res)
+        # else:
+        #     print json.dumps(res, indent=2)
 
 if __name__ == "__main__":
     sys.exit(main())

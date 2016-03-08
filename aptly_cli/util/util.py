@@ -43,7 +43,8 @@ class Util(object):
             print 'Create_init_file'
             try:
                 conf = open(name, 'a')
-                conf.write('[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\n')
+                conf.write(
+                    '[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\nprefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n')
                 conf.close()
 
             except:
@@ -93,7 +94,8 @@ class Util(object):
         if postfix is None:
             res = self._sort_out_last_n_snap(snaplist, prefix, nr_of_vers)
         else:
-            res = self._sort_out_last_n_snap(snaplist, prefix, nr_of_vers, postfix)
+            res = self._sort_out_last_n_snap(
+                snaplist, prefix, nr_of_vers, postfix)
 
         return res
 
@@ -104,9 +106,11 @@ class Util(object):
         if postfix is None:
             items_to_delete = self.get_last_snapshots(prefix, nr_of_vers)
         else:
-            items_to_delete = self.get_last_snapshots(prefix, nr_of_vers, postfix)
+            items_to_delete = self.get_last_snapshots(
+                prefix, nr_of_vers, postfix)
 
-        nr_to_left_over = int(self.api.get_config_from_file()['save_last_snap'])
+        nr_to_left_over = int(
+            self.api.get_config_from_file()['save_last_snap'])
 
         if len(items_to_delete) > nr_to_left_over:
             for item in items_to_delete[:-nr_to_left_over]:
@@ -120,7 +124,10 @@ class Util(object):
         Return, if all mirrors have new content to update or not (EMPTY).
         """
         local_cfg = self.api.get_config_from_file()
-        prefix_list = local_cfg['prefixes_mirrors'].split(', ')
+        if local_cfg['prefixes_mirrors']:
+            prefix_list = local_cfg['prefixes_mirrors'].split(', ')
+        else:
+            print "Error: Prefix list is empty: please add prefixes_mirrors to your configfile!"
 
         snaplist = self.api.snapshot_list()
         results = []
@@ -150,14 +157,57 @@ class Util(object):
         print result
 
     def list_all_repos_and_packages(self):
-        """
+        """ list_all_repos_and_packages
         """
         repos = self.api.repo_list()
-        # print repos
         for repo in repos:
             print repo[u'Name']
             packs = self.api.repo_show_packages(repo[u'Name'])
             for pack in packs:
-                print pack.split(', ')
-            # [1] + packs[2]
+                print pack
 
+    def get_last_packages(self, repo_name, pack_prefix, nr_of_leftover, postfix=None):
+        """ get_last_packages
+        """
+        resp = None
+        packs = self.api.repo_show_packages(repo_name)
+        if postfix:
+            resp = self._sort_out_last_n_packages(packs, pack_prefix, nr_of_leftover, postfix)
+        else:
+            resp = self._sort_out_last_n_packages(packs, pack_prefix, nr_of_leftover)
+        for pack in resp:
+                print pack
+        return resp
+
+    def _sort_out_last_n_packages(self, packlist, prefix, nr_of_leftover, postfix=None):
+        """ _sort_out_last_n_snap
+        Returns n sorted items from given input list by prefix.
+        """
+        # print packlist
+        worklist = []
+        for pack_blob in packlist:
+            pack_tmp = pack_blob.split(' ')
+            if pack_tmp[1] in prefix:
+                worklist.append(pack_blob)
+            # print pack_tmp[1]
+
+        # for x in packlist:
+        #     if prefix in x[u'Name']:
+        #         if postfix is None:
+        #             # end of string contains
+        #             worklist.append(x[u'Name'])
+        #         else:
+        #             if postfix in x[u'Name']:
+        #                 worklist.append(x[u'Name'])
+
+        slen = len(worklist)
+        worklist.sort(key=self._natural_keys)
+        ret = []
+        nr_o = int(nr_of_leftover)
+        if slen > (nr_o - 1):
+            for a in worklist[-nr_o:]:
+                ret.append(a)
+        else:
+            ret = worklist
+
+        return ret
