@@ -31,15 +31,12 @@ class AptlyApiRequests(object):
         if cfg_file is not None:
             basic_url = cfg_file['basic_url']
             port = cfg_file['port']
-            print "Config file loaded"
         else:
             basic_url = 'http://localhost'
             port = ':9003'
             print "No Config file found, take default values"
 
         url = basic_url + port
-        print "URL: "
-        print url
 
         # self values
         self.cfg = {
@@ -74,7 +71,7 @@ class AptlyApiRequests(object):
         Returns a dictonary of config values read out from file
         """
         config_file = ConfigParser()
-        config_dir = os.path.join(os.path.dirname(__file__), os.pardir, '../configs')
+        config_dir = os.path.join(os.path.dirname(__file__), os.pardir, 'configs')
         if not config_file.read(os.path.join(config_dir, 'aptly-cli.conf')):
             print "please have a valid config file at hand"
             sys.exit(1)
