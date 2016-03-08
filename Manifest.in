@@ -1,4 +1,4 @@
-include configs/aptly-cli.conf
+include configs/*
 include debian/*
 include aptly_cli/*
 include aptly_api_cli

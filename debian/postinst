@@ -1,4 +1,4 @@
 #! /bin/bash -e
-mkdir /etc/aptly-cli
+mkdir -p /etc/aptly-cli
 cp /usr/share/python/aptly-cli/configs/aptly-cli.conf /etc/aptly-cli/aptly-cli.conf
 ln -fs /usr/share/python/aptly-cli/bin/aptly-cli /usr/bin/aptly-cli
