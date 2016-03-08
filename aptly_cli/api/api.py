@@ -8,6 +8,9 @@ to the Aptly REST API remotely .
 
 import json
 import requests
+import os
+import sys
+from ConfigParser import ConfigParser
 
 
 class AptlyApiRequests(object):
@@ -22,9 +25,21 @@ class AptlyApiRequests(object):
         Pass url and port to the constructor
         to initialize instance.
         """
-        basic_url = 'http://localhost'
-        port = ':9003'
+        self.configfile = None
+        cfg_file = self._get_config_from_file()
+
+        if cfg_file is not None:
+            basic_url = cfg_file['basic_url']
+            port = cfg_file['port']
+            print "Config file loaded"
+        else:
+            basic_url = 'http://localhost'
+            port = ':9003'
+            print "No Config file found, take default values"
+
         url = basic_url + port
+        print "URL: "
+        print url
 
         # self values
         self.cfg = {
@@ -46,13 +61,29 @@ class AptlyApiRequests(object):
 
         self.headers = {'content-type': 'application/json'}
 
-    @classmethod
-    def _out(cls, arg_list):
+    @staticmethod
+    def _out(arg_list):
         """ _out
         Will give beautified output of a list.
         """
         for y in arg_list:
             print json.dumps(y, indent=2)
+
+    def _get_config_from_file(self):
+        """
+        Returns a dictonary of config values read out from file
+        """
+        config_file = ConfigParser()
+        config_dir = os.path.join(os.path.dirname(__file__), os.pardir, '../configs')
+        if not config_file.read(os.path.join(config_dir, 'aptly-cli.conf')):
+            print "please have a valid config file at hand"
+            sys.exit(1)
+
+        cfg_file = {
+            'basic_url': config_file.get('general', 'basic_url'),
+            'port': config_file.get('general', 'port')
+        }
+        return cfg_file
 
     ###################
     # LOCAL REPOS API #

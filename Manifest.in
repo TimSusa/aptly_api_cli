@@ -1,4 +1,4 @@
-
+recursive-include configs *
 include debian/*
 include aptly_cli/*
 include aptly_api_cli

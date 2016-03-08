@@ -26,10 +26,10 @@ setup(
     # data_files=[
     #     ('supervisor', ['contrib/rest-api.sv.conf']),
     # ],
-    # package_data={
-    #     'configs': [
-    #         'cluster/cloudinit/aws/*.conf',
-    #     ],
-    # },
+    package_data={
+        'configs': [
+            'aptly-cli.conf',
+        ],
+    },
     platforms='any'
 )
