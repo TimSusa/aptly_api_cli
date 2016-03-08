@@ -29,6 +29,30 @@ class Util(object):
         """
         return int(text) if text.isdigit() else text
 
+    @staticmethod
+    def create_init_file():
+        """ create_init_file
+        Will create a config file at home folder, if it does not exist.
+        """
+        home = expanduser("~")
+        name = home + '/aptly-cli.conf'
+
+        print "Look for already existing file..."
+
+        if not exists(name):
+            print 'Create_init_file'
+            try:
+                conf = open(name, 'a')
+                conf.write('[general]\nbasic_url=http://localhost\nport=:9003\n')
+                conf.close()
+
+            except:
+                print('Something went wrong! Can\'t tell what?')
+
+        else:
+            print "File already exists! Stop action"
+            print name
+
     def _natural_keys(self, text):
         """ _natural_keys
         Split up string at int.
@@ -37,7 +61,7 @@ class Util(object):
 
     def _sort_out_last_n_snap(self, snaplist, prefix, nr_of_leftover, postfix=None):
         """ _sort_out_last_n_snap
-        Returns n sorted items.
+        Returns n sorted items from given input list by prefix.
         """
         snapstaginglist = []
         for x in snaplist:
@@ -50,7 +74,6 @@ class Util(object):
                         snapstaginglist.append(x[u'Name'])
 
         slen = len(snapstaginglist)
-        # sort array and print last entry
         snapstaginglist.sort(key=self._natural_keys)
         ret = []
         nr_o = int(nr_of_leftover)
@@ -108,27 +131,3 @@ class Util(object):
                 break
 
         print result
-
-    @staticmethod
-    def create_init_file():
-        """ create_init_file
-        Will create a config file at home folder, if it does not exist.
-        """
-        home = expanduser("~")
-        name = home + '/aptly-cli.conf'
-
-        print "Look for already existing file..."
-
-        if not exists(name):
-            print 'Create_init_file'
-            try:
-                conf = open(name, 'a')
-                conf.write('[general]\nbasic_url=http://localhost\nport=:9003\n')
-                conf.close()
-
-            except:
-                print('Something went wrong! Can\'t tell what?')
-
-        else:
-            print "File already exists! Stop action"
-            print name
