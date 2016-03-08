@@ -184,6 +184,11 @@ def _get_parser_opts():
                       help='Returns the last n snapshots by prefix or optional postfix.',
                       metavar='PREFIX NR_OF_VERS [POSTFIX]')
 
+    parser.add_option('--clean_last_snapshots',
+                      nargs=2,
+                      help='Cleans the last n snapshots by prefix or optional postfix.',
+                      metavar='PREFIX NR_OF_VERS [POSTFIX]')
+
     parser.add_option('--diff_both_last_snapshots_mirrors',
                       action='store_true',
                       help='Sorts list of snapshots and makes a diff between the last two.')
@@ -356,6 +361,15 @@ def _execute_opts(obj, opts, args, util):
             print ''.join(res)
         else:
             print json.dumps(res, indent=2)
+
+    if opts.clean_last_snapshots:
+        o = opts.clean_last_snapshots
+        if len(args) >= 1:
+            res = util.clean_last_snapshots(o[0], o[1], args[0])
+        else:
+            res = util.clean_last_snapshots(o[0], o[1])
+
+        print json.dumps(res, indent=2)
 
     if opts.diff_both_last_snapshots_mirrors:
         # package prefix, reponame

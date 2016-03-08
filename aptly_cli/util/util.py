@@ -97,6 +97,18 @@ class Util(object):
 
         return res
 
+    def clean_last_snapshots(self, prefix, nr_of_vers, postfix=None):
+        """ clean_last_snapshots
+        Cleans n versions of snapshots, sorted out by a prefix and optional postfix.
+        """
+        if postfix is None:
+            items_to_delete = self.get_last_snapshots(prefix, nr_of_vers)
+        else:
+            items_to_delete = self.get_last_snapshots(prefix, nr_of_vers, postfix)
+
+        for item in items_to_delete:
+            self.api.snapshot_delete(item, '1')
+
     def diff_both_last_snapshots_mirrors(self):
         """ diff_both_last_snapshots_mirrors
         Fetches out last two versions of snapshots from a given list of mirrors and diffs both.
