@@ -4,8 +4,6 @@ try:
 except ImportError:
     from distutils.core import setup, find_packages
 
-filename = resource_filename(Requirement.parse("Aptly-Api-Cli"), "configs/aptly-cli.conf")
-
 setup(
     name='Aptly-Api-Cli',
     version='0.1',
@@ -28,6 +26,8 @@ setup(
     # data_files=[
     #     ('configs', ['configs/aptly-cli.conf']),
     # ],
-    package_data={'configs': ['configs/aptly-cli.conf']},
+    package_data={'configs': ['aptly_cli/configs/aptly-cli.conf']},
     platforms='any'
 )
+
+filename = resource_filename(Requirement.parse("Aptly-Api-Cli"), "configs/aptly-cli.conf")

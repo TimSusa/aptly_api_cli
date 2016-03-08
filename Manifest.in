@@ -1,4 +1,4 @@
-include configs/*
+include aptly_cli/configs/*
 include debian/*
 include aptly_cli/*
 include aptly_api_cli
@@ -6,4 +6,4 @@ include requirements.txt
 include TODO.md
 include README.md
 
-exclude debian/aptly-api-cli.*
+exclude debian/aptly-cli.*
