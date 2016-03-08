@@ -191,15 +191,6 @@ class Util(object):
                 worklist.append(pack_blob)
             # print pack_tmp[1]
 
-        # for x in packlist:
-        #     if prefix in x[u'Name']:
-        #         if postfix is None:
-        #             # end of string contains
-        #             worklist.append(x[u'Name'])
-        #         else:
-        #             if postfix in x[u'Name']:
-        #                 worklist.append(x[u'Name'])
-
         slen = len(worklist)
         worklist.sort(key=self._natural_keys)
         ret = []

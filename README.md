@@ -220,3 +220,46 @@ Show packages by key
 ```
 aptly_api_cli --package_show_by_key=PACKAGE_KEY
 ```
+
+## Extensions API
+Tools and utilities to better integrate into workflow.
+
+
+#### Create configuration file
+Creates standard config file (aptly-cli.conf) in $HOME
+```
+aptly_api_cli --create_config
+```
+
+#### Get last n snapshots sorted by prefix
+Returns the last n snapshots by prefix or optional postfix.
+```
+aptly_api_cli --get_last_snapshots=PREFIX NR_OF_VERS [POSTFIX]
+```
+
+#### Clean out last n snapshots by prefix
+Cleans the last n snapshots by prefix or optional postfix.
+ ```
+ aptly_api_cli --clean_last_snapshots=PREFIX NR_OF_VERS [POSTFIX]
+ ```
+
+
+#### List all repos and packages
+List all repos with their containing packages.
+```
+ aptly_api_cli --list_repos_and_packages
+ ```
+
+#### Get last n packages by reponame and sorted by prefix
+Returns the last n packages by reponame, prefix or optional postfix.
+```
+ aptly_api_cli --get_last_packages=REPO_NAME PREFIX NR_OF_VERS [POSTFIX]
+ ```
+
+#### Diff all mirror snapshots
+Sorts list of snapshots and makes a diff between the last two.
+```
+ aptly_api_cli --diff_both_last_snapshots_mirrors
+
+```
+
