@@ -44,7 +44,7 @@ class Util(object):
             try:
                 conf = open(name, 'a')
                 conf.write(
-                    '[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\nprefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n')
+                    '[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\nsave_last_pkg=10\nprefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n')
                 conf.close()
 
             except:
@@ -175,9 +175,35 @@ class Util(object):
             resp = self._sort_out_last_n_packages(packs, pack_prefix, nr_of_leftover, postfix)
         else:
             resp = self._sort_out_last_n_packages(packs, pack_prefix, nr_of_leftover)
-        for pack in resp:
-                print pack
+        # for pack in resp:
+        #         print pack
         return resp
+
+    def clean_last_packages(self, repo_name, pack_prefix, nr_of_leftover, postfix=None):
+        """ clean_last_packages
+        """
+        items_to_delete = None
+        if postfix:
+            items_to_delete = self.get_last_packages(repo_name, pack_prefix, nr_of_leftover, postfix)
+        else:
+            items_to_delete = self.get_last_packages(repo_name, pack_prefix, nr_of_leftover)
+
+        nr_to_left_over = int(
+            self.api.get_config_from_file()['save_last_pkg'])
+
+        print nr_to_left_over
+
+        if len(items_to_delete) > nr_to_left_over:
+            worklist = []
+            for item in items_to_delete[:-nr_to_left_over]:
+                if item:
+                    # force removal
+                    print item
+                    worklist.append(item)
+
+            self.api.repo_delete_packages_by_key(repo_name, worklist)
+        else:
+            print "Nothing to delete..."
 
     def _sort_out_last_n_packages(self, packlist, prefix, nr_of_leftover, postfix=None):
         """ _sort_out_last_n_snap

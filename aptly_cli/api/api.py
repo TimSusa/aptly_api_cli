@@ -51,7 +51,7 @@ class AptlyApiRequests(object):
             'route_vers': url + '/api/version/',
 
             # Number of packages to have left
-            'save_last_pkg': 10,
+            # 'save_last_pkg': 10,
 
             # Number of snapshots to have left
             # 'save_last_snap': 3
@@ -82,6 +82,7 @@ class AptlyApiRequests(object):
                 'port': config_file.get('general', 'port'),
                 'prefixes_mirrors': config_file.get('general', 'prefixes_mirrors'),
                 'save_last_snap': config_file.get('general', 'save_last_snap'),
+                'save_last_pkg': config_file.get('general', 'save_last_pkg'),
                 'repos_to_clean': config_file.get('general', 'repos_to_clean'),
                 'package_prefixes': config_file.get('general', 'package_prefixes')
             }
