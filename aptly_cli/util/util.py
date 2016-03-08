@@ -2,12 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """ Util
-Instance
+Instance for utils and tools.
 """
 
 import re
-# import json
-# import sys
 from os.path import expanduser, exists
 from aptly_cli.api.api import AptlyApiRequests
 
@@ -15,35 +13,31 @@ from aptly_cli.api.api import AptlyApiRequests
 class Util(object):
 
     """ Util
-    Instance
+    Instance for utils and tools.
     """
 
     def __init__(self):
         """
-        Desc
+        Init contstructor
         """
         self.api = AptlyApiRequests()
 
     @staticmethod
     def _atoi(text):
         """ _atoi
-        Desc
+        Converts asci to int
         """
         return int(text) if text.isdigit() else text
 
     def _natural_keys(self, text):
         """ _natural_keys
-        Desc
+        Split up string at int.
         """
         return [self._atoi(c) for c in re.split('(\\d+)', text)]
 
     def _sort_out_last_n_snap(self, snaplist, prefix, nr_of_leftover, postfix=None):
         """ _sort_out_last_n_snap
-        Input:
-        snaplist - List of all Snapshots
-        n - Number of items to let over
-        Output:
-        Returns array of sorted items.
+        Returns n sorted items.
         """
         snapstaginglist = []
         for x in snaplist:
@@ -58,7 +52,6 @@ class Util(object):
         slen = len(snapstaginglist)
         # sort array and print last entry
         snapstaginglist.sort(key=self._natural_keys)
-        # print snapstaginglist
         ret = []
         nr_o = int(nr_of_leftover)
         if slen > (nr_o - 1):
@@ -71,7 +64,7 @@ class Util(object):
 
     def get_last_snapshots(self, prefix, nr_of_vers, postfix=None):
         """ get_last_snapshots
-        Desc
+        Returns n versions of snapshots, sorted out by a prefix and optional postfix.
         """
         snaplist = self.api.snapshot_list()
         if postfix is None:
@@ -83,7 +76,8 @@ class Util(object):
 
     def diff_both_last_snapshots_mirrors(self):
         """ diff_both_last_snapshots_mirrors
-        DEsc
+        Fetches out last two versions of snapshots from a given list of mirrors and diffs both.
+        Return, if all mirrors have new content to update or not (EMPTY).
         """
         local_cfg = self.api.get_config_from_file()
         prefix_list = local_cfg['prefixes_mirrors'].split(', ')
@@ -118,6 +112,7 @@ class Util(object):
     @staticmethod
     def create_init_file():
         """ create_init_file
+        Will create a config file at home folder, if it does not exist.
         """
         home = expanduser("~")
         name = home + '/aptly-cli.conf'
@@ -127,7 +122,7 @@ class Util(object):
         if not exists(name):
             print 'Create_init_file'
             try:
-                conf = open(name, 'a')   # Trying to create a new file if it does not exist
+                conf = open(name, 'a')
                 conf.write('[general]\nbasic_url=http://localhost\nport=:9003\n')
                 conf.close()
 
