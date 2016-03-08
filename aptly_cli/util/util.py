@@ -43,7 +43,7 @@ class Util(object):
             print 'Create_init_file'
             try:
                 conf = open(name, 'a')
-                conf.write('[general]\nbasic_url=http://localhost\nport=:9003\n')
+                conf.write('[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\n')
                 conf.close()
 
             except:
@@ -106,8 +106,12 @@ class Util(object):
         else:
             items_to_delete = self.get_last_snapshots(prefix, nr_of_vers, postfix)
 
-        for item in items_to_delete:
-            self.api.snapshot_delete(item, '1')
+        nr_to_left_over = int(self.api.get_config_from_file()['save_last_snap'])
+
+        if len(items_to_delete) > nr_to_left_over:
+            for item in items_to_delete[:-nr_to_left_over]:
+                if item:
+                    self.api.snapshot_delete(item, '1')
 
     def diff_both_last_snapshots_mirrors(self):
         """ diff_both_last_snapshots_mirrors

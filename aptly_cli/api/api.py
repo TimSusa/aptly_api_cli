@@ -54,7 +54,7 @@ class AptlyApiRequests(object):
             'save_last_pkg': 10,
 
             # Number of snapshots to have left
-            'save_last_snap': 3
+            # 'save_last_snap': 3
         }
 
     @staticmethod
@@ -79,7 +79,8 @@ class AptlyApiRequests(object):
             cfg_file = {
                 'basic_url': config_file.get('general', 'basic_url'),
                 'port': config_file.get('general', 'port'),
-                'prefixes_mirrors': config_file.get('general', 'prefixes_mirrors')
+                'prefixes_mirrors': config_file.get('general', 'prefixes_mirrors'),
+                'save_last_snap': config_file.get('general', 'save_last_snap')
             }
 
         return cfg_file
