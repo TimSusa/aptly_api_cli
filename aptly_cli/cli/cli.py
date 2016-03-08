@@ -7,6 +7,7 @@ The CLI with option parser
 
 import sys
 import json
+import os
 from optparse import OptionParser
 
 from aptly_cli.api.api import AptlyApiRequests
@@ -26,7 +27,11 @@ def main():
 
     if len(sys.argv) == 1:
         parser.print_help()
-        sys.exit(0)
+        home = os.path.expanduser("~")
+        name = home + '/aptly-cli.conf'
+        if not os.path.exists(name):
+            print "No config file (aptly-cli.conf) found at $HOME. Please create one by --create_config option"
+            sys.exit(0)
 
 
 def _get_parser_opts():

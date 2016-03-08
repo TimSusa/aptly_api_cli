@@ -74,15 +74,14 @@ class AptlyApiRequests(object):
         name = home + '/aptly-cli.conf'
 
         config_file = ConfigParser()
-        # config_dir = os.path.join(os.path.dirname(__file__), os.pardir, '../etc')
         if not config_file.read(name):
-            print "No config file (aptly-cli.conf) found at $HOME. Please create one by --create_config option"
-            # sys.exit(1)
+            cfg_file = None
+        else:
+            cfg_file = {
+                'basic_url': config_file.get('general', 'basic_url'),
+                'port': config_file.get('general', 'port')
+            }
 
-        cfg_file = {
-            'basic_url': config_file.get('general', 'basic_url'),
-            'port': config_file.get('general', 'port')
-        }
         return cfg_file
 
     ###################
