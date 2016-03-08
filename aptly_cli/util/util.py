@@ -8,6 +8,7 @@ Instance
 import re
 # import json
 # import sys
+from os.path import expanduser, exists
 from aptly_cli.api.api import AptlyApiRequests
 
 
@@ -59,7 +60,7 @@ class Util(object):
         snapstaginglist.sort(key=self._natural_keys)
         # print snapstaginglist
         ret = []
-        nr_o = self._atoi(nr_of_leftover)
+        nr_o = int(nr_of_leftover)
         if slen > (nr_o - 1):
             for a in snapstaginglist[-nr_o:]:
                 ret.append(a)
@@ -118,3 +119,26 @@ class Util(object):
                 break
 
         print result
+
+    @staticmethod
+    def create_init_file():
+        """ create_init_file
+        """
+        home = expanduser("~")
+        name = home + '/aptly-cli.conf'
+
+        print "Look for already existing file..."
+
+        if not exists(name):
+            print 'Create_init_file'
+            try:
+                conf = open(name, 'a')   # Trying to create a new file if it does not exist
+                conf.write('# aptly-cli config file\n[general]\nbasic_url=http://localhost\nport=:9003\n')
+                conf.close()
+
+            except:
+                print('Something went wrong! Can\'t tell what?')
+
+        else:
+            print "File already exists! Stop action"
+            print name

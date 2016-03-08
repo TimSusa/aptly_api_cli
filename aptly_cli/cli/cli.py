@@ -170,14 +170,18 @@ def _get_parser_opts():
                       help='Show packages by key',
                       metavar='PACKAGE_KEY')
 
-    parser.add_option('--diff_both_last_snapshots_mirrors',
+    parser.add_option('--create_config',
                       action='store_true',
-                      help='Sorts list of snapshots and makes a diff between the last two.')
+                      help='Creates standard config file (aptly-cli.conf) in $HOME')
 
     parser.add_option('--get_last_snapshots',
                       nargs=2,
                       help='Returns the last n snapshots by prefix or optional postfix.',
                       metavar='PREFIX NR_OF_VERS [POSTFIX]')
+
+    parser.add_option('--diff_both_last_snapshots_mirrors',
+                      action='store_true',
+                      help='Sorts list of snapshots and makes a diff between the last two.')
     return parser
 
 
@@ -332,9 +336,9 @@ def _execute_opts(obj, opts, args, util):
     if opts.get_version:
         obj.get_version()
 
-    if opts.diff_both_last_snapshots_mirrors:
+    if opts.create_config:
         # package prefix, reponame
-        util.diff_both_last_snapshots_mirrors()
+        util.create_init_file()
 
     if opts.get_last_snapshots:
         o = opts.get_last_snapshots
@@ -348,6 +352,9 @@ def _execute_opts(obj, opts, args, util):
         else:
             print json.dumps(res, indent=2)
 
+    if opts.diff_both_last_snapshots_mirrors:
+        # package prefix, reponame
+        util.diff_both_last_snapshots_mirrors()
 
 if __name__ == "__main__":
     sys.exit(main())

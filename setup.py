@@ -26,7 +26,7 @@ setup(
     # data_files=[
     #     ('configs', ['configs/aptly-cli.conf']),
     # ],
-    package_data={'configs': ['aptly_cli/configs/aptly-cli.conf']},
+    # package_data={'configs': ['aptly_cli/configs/aptly-cli.conf']},
     platforms='any'
 )
 
