@@ -3,6 +3,8 @@
 ### Why do we need another aptly cli interface?
 - Because aptly-api-cli has a lot of more features build in.
 - aptly-api-cli is made accessible to the python community
+- aptly-api-cli utils are already integrated into a CI Workflow
+- Additional scripts are offered (see ci-scripts folder), which can be used along your CI jobs (e.g. jenkins)
 
 
 # Description
@@ -11,9 +13,10 @@ All functionality from here http://www.aptly.info/doc/api/ is extended by even m
 snapshots or packages, etc. pp
 
 You can make either use of the aptly_api_request.py as a starting point for your own application or just use the cli (aptly_api_cli.py)
-bundled with this repository to execute your requests via command line.
+bundled with this repository to execute your requests via command line or run scripts, calling the cli, integrated into a CI Workflow.
 
 # Installation
+
 
 # Get started
 
@@ -26,14 +29,38 @@ Show this help message and exit
 ```
 
 ## Extensions API
-Tools and utilities to better integrate into workflow.
+Tools and utilities integrating to your CI workflow.
 
 
 #### Create configuration file
-Creates standard config file (aptly-cli.conf) in $HOME
+Creates standard config file (aptly-cli.conf) at $HOME directory.
+
 ```
 aptly_api_cli --create_config
 ```
+Please Note: You can configure the following keys:
+basic_url - the basic url
+port - the port
+prefixes_mirrors - prefixes for all mirrors that you have created
+repos_to_clean - reponames, which should be search for cleanout
+package_prefixes - package-prefixes, which should be search for cleanout
+save_last_pkg - Number of package-versions for each prefix, that should be kept
+save_last_snap - Number of snapshot-versions for each prefix, that should be kept
+
+See an working example (aptly-cli.conf):
+
+```
+[general]
+basic_url=http://localhost
+port=:9003
+prefixes_mirrors=cloudera, erlang, mongodb2, mongodb, nginx, puppetmaster, rabbitmq, redis, saltstack2014.7, saltstack2015.5, saltstack, git
+repos_to_clean=unstable-repo, stable-repo
+package_prefixes=cluster-manager, puppet-config, ingest-api, camus-etl, aptly-cli
+save_last_pkg=10
+save_last_snap=3
+```
+
+
 
 #### Get last n snapshots sorted by prefix
 Returns the last n snapshots by prefix or optional postfix.
