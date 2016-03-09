@@ -117,6 +117,9 @@ class Util(object):
                 if item:
                     # force removal
                     self.api.snapshot_delete(item, '1')
+        else:
+            print prefix
+            print "Nothing to delete...."
 
     def diff_both_last_snapshots_mirrors(self):
         """ diff_both_last_snapshots_mirrors
@@ -226,3 +229,17 @@ class Util(object):
             ret = worklist
 
         return ret
+
+    def clean_mirrored_snapshots(self):
+        """ clean_mirrored_snapshots
+        Clean out all snapshots that were taken from mirrors. The mirror entries are taken from config file.
+        """
+        print "clean mirrored snapshots"
+        local_cfg = self.api.get_config_from_file()
+        if local_cfg['prefixes_mirrors']:
+            prefix_list = local_cfg['prefixes_mirrors'].split(', ')
+        else:
+            print "Error: Prefix list is empty: please add prefixes_mirrors to your configfile!"
+
+        for x in prefix_list:
+            self.clean_last_snapshots(x, 100)
