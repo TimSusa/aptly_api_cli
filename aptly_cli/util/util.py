@@ -243,3 +243,25 @@ class Util(object):
 
         for x in prefix_list:
             self.clean_last_snapshots(x, 100)
+
+    def clean_repo_packages(self):
+        """ clean_repo_snapshots
+        Clean out all snapshots that were taken from repos. The repo entries are taken from config file.
+        """
+        print "clean snapshots from repos"
+        local_cfg = self.api.get_config_from_file()
+        if local_cfg['repos_to_clean']:
+            repo_list = local_cfg['repos_to_clean'].split(', ')
+        else:
+            print "Error: Prefix list is empty: please add repos_to_clean to your configfile!"
+
+        if local_cfg['package_prefixes']:
+            pack_pref_list = local_cfg['package_prefixes'].split(', ')
+        else:
+            print "Error: Prefix list is empty: please add package_prefixes to your configfile!"
+
+        for repo_name in repo_list:
+            print repo_name
+            for pack_prefix in pack_pref_list:
+                print pack_prefix
+                self.clean_last_packages(repo_name, pack_prefix, 100)

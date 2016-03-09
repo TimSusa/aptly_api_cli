@@ -9,11 +9,12 @@
 
 # Description
 This python command line interface, executes calls to the Aptly server remotely, without blocking the Aptly database.
-All functionality from here http://www.aptly.info/doc/api/ is extended by even more useful features, like clean out last N
-snapshots or packages, etc. pp
+All functionality from here http://www.aptly.info/doc/api/ is extended by even more useful features, like showing or cleaning out snapshots, packages for couple of repos or mirrors.
 
 You can make either use of the aptly_api_request.py as a starting point for your own application or just use the cli (aptly_api_cli.py)
 bundled with this repository to execute your requests via command line or run scripts, calling the cli, integrated into a CI Workflow.
+
+This project is in use on production for www.lambdanow.com running on a JENKINS server.
 
 # Build
 
@@ -51,8 +52,8 @@ make html
 ```
 
 
-## Extensions API
-Tools and utilities integrating to your CI workflow.
+## Extensions
+Further functionalities improving your aptly CI workflow.
 
 
 #### Create configuration file
@@ -66,8 +67,8 @@ Please Note: You can configure the following keys:
 - basic_url: the basic url
 - port: the port
 - prefixes_mirrors: prefixes for all mirrors that you have created
-- repos_to_clean: reponames, which should be search for cleanout
-- package_prefixes: package-prefixes, which should be search for cleanout
+- repos_to_clean: reponames, which should be searched for to be cleaned out
+- package_prefixes: package-prefixes, which should be searched for to be cleaned out
 - save_last_pkg: Number of package-versions for each prefix, that should be kept
 - save_last_snap: Number of snapshot-versions for each prefix, that should be kept
 
@@ -77,7 +78,7 @@ See an working example (aptly-cli.conf):
 [general]
 basic_url=http://localhost
 port=:9003
-prefixes_mirrors=cloudera, erlang, mongodb2, mongodb, nginx, puppetmaster, rabbitmq, redis, saltstack2014.7, saltstack2015.5, saltstack, git
+prefixes_mirrors=cloudera, erlang, mongodb2, mongodb_, nginx, puppetmaster, rabbitmq, redis, saltstack2014.7, saltstack2015.5, saltstack_, git
 repos_to_clean=unstable-repo, stable-repo
 package_prefixes=cluster-manager, puppet-config, ingest-api, camus-etl, aptly-cli
 save_last_pkg=10
@@ -130,6 +131,14 @@ Cleans out snapshots, which were taken from mirrors (from config)
  aptly_api_cli --clean_mirrored_snapshots
 
 ```
+
+#### Clean all packages from repos
+Cleans out packages globally, which were taken from repo names (from config)
+```
+ aptly_api_cli --clean_repo_packages
+
+```
+
 
 ## CI - Scripts
 

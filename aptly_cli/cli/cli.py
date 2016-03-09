@@ -189,6 +189,14 @@ def _get_parser_opts():
                       help='Cleans the last n snapshots by prefix or optional postfix.',
                       metavar='PREFIX NR_OF_VERS [POSTFIX]')
 
+    parser.add_option('--clean_mirrored_snapshots',
+                      action='store_true',
+                      help='Cleans out snapshots, which were taken from mirrors (from config)')
+
+    parser.add_option('--clean_repo_packages',
+                      action='store_true',
+                      help='Cleans out packages, which were taken from repos (from config)')
+
     parser.add_option('--list_repos_and_packages',
                       action='store_true',
                       help='List all repos with their containing packages.')
@@ -207,9 +215,6 @@ def _get_parser_opts():
                       action='store_true',
                       help='Sorts list of snapshots and makes a diff between the last two.')
 
-    parser.add_option('--clean_mirrored_snapshots',
-                      action='store_true',
-                      help='Cleans out snapshots, which were taken from mirrors (from config)')
     return parser
 
 
@@ -399,6 +404,10 @@ def _execute_opts(obj, opts, args, util):
     if opts.clean_mirrored_snapshots:
         # package prefix, reponame
         util.clean_mirrored_snapshots()
+
+    if opts.clean_repo_packages:
+        # package prefix, reponame
+        util.clean_repo_packages()
 
     if opts.list_repos_and_packages:
         # package prefix, reponame
