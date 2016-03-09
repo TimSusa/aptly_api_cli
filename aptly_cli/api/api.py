@@ -861,9 +861,16 @@ class AptlyApiRequests(object):
         else:
             fo = True
 
-        url = self.cfg['route_pub'] + prefix + '/' + dist
+        url = self.cfg['route_pub'] + 's3:' + prefix + ':/' + dist
 
         snap_list_obj = []
+        is_array = isinstance(snapshot_list, list)
+
+        if not is_array:
+            print "convert snapshot param to array.. "
+            tmp_val = snapshot_list
+            snapshot_list = tmp_val.split(', ')
+
         for x in snapshot_list:
             if component is not None:
                 snap_obj = {

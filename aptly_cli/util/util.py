@@ -175,8 +175,6 @@ class Util(object):
             resp = self._sort_out_last_n_packages(packs, pack_prefix, nr_of_leftover, postfix)
         else:
             resp = self._sort_out_last_n_packages(packs, pack_prefix, nr_of_leftover)
-        # for pack in resp:
-        #         print pack
         return resp
 
     def clean_last_packages(self, repo_name, pack_prefix, nr_of_leftover, postfix=None):
@@ -197,7 +195,7 @@ class Util(object):
             worklist = []
             for item in items_to_delete[:-nr_to_left_over]:
                 if item:
-                    # force removal
+                    print "Will remove..."
                     print item
                     worklist.append(item)
 
