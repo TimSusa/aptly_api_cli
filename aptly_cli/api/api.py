@@ -125,7 +125,7 @@ class AptlyApiRequests(object):
                           headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def repo_show(self, repo_name):
@@ -149,7 +149,7 @@ class AptlyApiRequests(object):
         """
         r = requests.get(self.cfg['route_repo'] + repo_name, headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def repo_show_packages(self, repo_name, pkg_to_search=None, with_deps=0, detail='compact'):
@@ -222,7 +222,7 @@ class AptlyApiRequests(object):
                          headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def repo_list(self):
@@ -260,7 +260,7 @@ class AptlyApiRequests(object):
                             headers=self.headers)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
         return resp_data
 
     def repo_add_package_from_upload(self, repo_name, dir_name, file_name=None, params=None):
@@ -315,7 +315,7 @@ class AptlyApiRequests(object):
                           headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def repo_add_packages_by_key(self, repo_name, package_key_list):
@@ -353,7 +353,7 @@ class AptlyApiRequests(object):
         }
         r = requests.post(url, data=json.dumps(param), headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def repo_delete_packages_by_key(self, repo_name, package_key_list):
@@ -382,7 +382,7 @@ class AptlyApiRequests(object):
         }
         r = requests.delete(url, data=json.dumps(data), headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     ###################
@@ -402,7 +402,8 @@ class AptlyApiRequests(object):
         r = requests.get(self.cfg['route_file'], headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
+        return resp_data
 
     def file_upload(self, dir_name, file_path):
         """
@@ -426,7 +427,7 @@ class AptlyApiRequests(object):
 
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def file_list(self, dir_name=None):
@@ -449,7 +450,7 @@ class AptlyApiRequests(object):
                          dir_name, headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
         return resp_data
 
     def file_delete_directory(self, dir_name):
@@ -465,7 +466,7 @@ class AptlyApiRequests(object):
             self.cfg['route_file'] + dir_name, headers=self.headers)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
         return resp_data
 
     def file_delete(self, dir_name, file_name):
@@ -481,7 +482,7 @@ class AptlyApiRequests(object):
             self.cfg['route_file'] + dir_name + '/' + file_name, headers=self.headers)
 #        r.raise_for_status()
         resp_data = json.loads(r.content)
-        print json.dumps(resp_data)
+        # print json.dumps(resp_data)
         return resp_data
 
     ################
@@ -541,7 +542,7 @@ class AptlyApiRequests(object):
         r = requests.post(url, data=json.dumps(data), headers=self.headers)
         # r.raise_for_status()
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def snapshot_create_from_package_refs(self, snapshot_name, source_snapshot_list, package_refs_list, descr=None):
@@ -581,7 +582,7 @@ class AptlyApiRequests(object):
 
         r = requests.post(url, data=json.dumps(data), headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def snapshot_update(self, old_snapshot_name, new_snapshot_name, description=None):
@@ -613,7 +614,7 @@ class AptlyApiRequests(object):
 
         r = requests.put(url, data=json.dumps(data), headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def snapshot_show(self, snapshot_name):
@@ -632,7 +633,7 @@ class AptlyApiRequests(object):
         url = self.cfg['route_snap'] + snapshot_name
         r = requests.get(url, headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def snapshot_delete(self, snapshot_name, force='0'):
@@ -664,7 +665,7 @@ class AptlyApiRequests(object):
         r = requests.delete(url, params=param, headers=self.headers)
         print r.url
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def snapshot_show_packages(self, snapshot_name, package_to_search=None, with_deps=0, detail='compact'):
@@ -699,7 +700,7 @@ class AptlyApiRequests(object):
 
         r = requests.get(url, params=param, headers=self.headers)
         resp_data = json.loads(r.content)
-        print resp_data
+        # print resp_data
         return resp_data
 
     def snapshot_diff(self, snapshot_left, snapshot_right):
@@ -743,7 +744,7 @@ class AptlyApiRequests(object):
         url = self.cfg['route_pub']
         r = requests.get(url, headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     def publish(self, prefix, src_kind, src_list, dist, comp_list, label=None, orig=None, overwrite=None, arch_list=None):
@@ -830,11 +831,11 @@ class AptlyApiRequests(object):
                 'ForceOverwrite': fo
             }
 
-        print dat
+        # print dat
         r = requests.post(url, data=json.dumps(dat), headers=self.headers)
-        print r.url
+        # print r.url
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     def publish_switch(self, prefix, snapshot_list, dist, component=None, force_overwrite=0):
@@ -889,7 +890,7 @@ class AptlyApiRequests(object):
         }
         r = requests.put(url, data=json.dumps(data), headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     def publish_drop(self, prefix, distribution, force=0):
@@ -916,7 +917,7 @@ class AptlyApiRequests(object):
 
         r = requests.delete(url, params=param, headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     ###############
@@ -948,7 +949,7 @@ class AptlyApiRequests(object):
         url = self.cfg['route_pack'] + package_key
         r = requests.get(url, headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     #############
@@ -968,7 +969,7 @@ class AptlyApiRequests(object):
         print url
         r = requests.get(url, headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
 
     ###############
@@ -986,5 +987,5 @@ class AptlyApiRequests(object):
         url = self.cfg['route_vers']
         r = requests.get(url, headers=self.headers)
         resp = json.loads(r.content)
-        print resp
+        # print resp
         return resp
