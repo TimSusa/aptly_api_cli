@@ -9,8 +9,6 @@ import sys
 import json
 import os
 from optparse import OptionParser
-
-from aptly_cli.api.api import AptlyApiRequests
 from aptly_cli.util.util import Util
 
 
@@ -19,11 +17,9 @@ def main():
     Main entry point for cli.
     """
     util = Util()
-
-    obj = AptlyApiRequests()
     parser = _get_parser_opts()
     (opts, args) = parser.parse_args()
-    _execute_opts(obj, opts, args, util)
+    _execute_opts(opts, args, util)
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -154,7 +150,8 @@ def _get_parser_opts():
     parser.add_option('--publish',
                       nargs=5,
                       help='Publish snapshot or repository to storage',
-                      metavar='PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION COMPONENT_LIST [LABEL] [ORIGIN] [FORCE_OVERWRITE] [ARCHITECTURES_LIST]')
+                      metavar='PREFIX SOURCES_KIND SOURCES_LIST DISTRIBUTION COMPONENT_LIST [LABEL] [ORIGIN] \
+[FORCE_OVERWRITE] [ARCHITECTURES_LIST]')
 
     parser.add_option('--publish_drop',
                       nargs=2,
@@ -218,7 +215,7 @@ def _get_parser_opts():
     return parser
 
 
-def _execute_opts(obj, opts, args, util):
+def _execute_opts(opts, args, util):
     """ _execute_opts
     Execute functions due to options and arguments.
     """
@@ -230,7 +227,7 @@ def _execute_opts(obj, opts, args, util):
             pass
 
     if opts.repo_list:
-        resp = obj.repo_list()
+        resp = util.api.repo_list()
         print json.dumps(resp, indent=2)
 
     if opts.repo_create:
@@ -238,139 +235,139 @@ def _execute_opts(obj, opts, args, util):
             Data.comment = args[0]
             Data.default_distribution = args[1]
             Data.default_component = args[2]
-            obj.repo_create(opts.repo_create, Data)
+            util.api.repo_create(opts.repo_create, Data)
         else:
-            obj.repo_create(opts.repo_create)
+            util.api.repo_create(opts.repo_create)
 
     if opts.repo_show_packages:
         resp = None
         if len(args) >= 3:
-            resp = obj.repo_show_packages(
+            resp = util.api.repo_show_packages(
                 opts.repo_show_packages, args[0], args[1], args[2])
         else:
-            resp = obj.repo_show_packages(opts.repo_show_packages)
+            resp = util.api.repo_show_packages(opts.repo_show_packages)
         print json.dumps(resp, indent=2)
 
     if opts.repo_show:
-        obj.repo_show(opts.repo_show)
+        util.api.repo_show(opts.repo_show)
 
     if opts.repo_edit:
         if len(args) >= 3:
             Data.comment = args[0]
             Data.default_distribution = args[1]
             Data.default_component = args[2]
-            obj.repo_edit(opts.repo_edit, Data)
+            util.api.repo_edit(opts.repo_edit, Data)
         else:
             print 'Wrong usage!'
 
     if opts.repo_delete:
-        obj.repo_delete(opts.repo_delete)
+        util.api.repo_delete(opts.repo_delete)
 
     if opts.file_list_dirs:
-        obj.file_list_directories()
+        util.api.file_list_directories()
 
     if opts.file_upload:
-        obj.file_upload(opts.file_upload[0], opts.file_upload[1])
+        util.api.file_upload(opts.file_upload[0], opts.file_upload[1])
 
     if opts.repo_add_package_from_upload:
         o = opts.repo_add_package_from_upload
-        obj.repo_add_package_from_upload(o[0], o[1], o[2])
+        util.api.repo_add_package_from_upload(o[0], o[1], o[2])
 
     if opts.repo_add_packages_by_key:
         print 'repo_add_packages_by_key'
         o = opts.repo_add_packages_by_key
         key_list = o[1].split(', ')
-        obj.repo_add_packages_by_key(o[0], key_list)
+        util.api.repo_add_packages_by_key(o[0], key_list)
 
     if opts.repo_delete_packages_by_key:
         print 'repo_delete_packages_by_key'
         o = opts.repo_delete_packages_by_key
         key_list = o[1].split(', ')
-        obj.repo_delete_packages_by_key(o[0], key_list)
+        util.api.repo_delete_packages_by_key(o[0], key_list)
 
     if opts.file_list:
-        obj.file_list()
+        util.api.file_list()
 
     if opts.file_delete_dir:
-        obj.file_delete_directory(opts.file_delete_dir)
+        util.api.file_delete_directory(opts.file_delete_dir)
 
     if opts.file_delete:
-        obj.file_delete(opts.file_delete[0], opts.file_delete[1])
+        util.api.file_delete(opts.file_delete[0], opts.file_delete[1])
 
     if opts.snapshot_create_from_local_repo:
         o = opts.snapshot_create_from_local_repo
         if len(args) >= 1:
-            obj.snapshot_create_from_local_repo(o[0], o[1], args[0])
+            util.api.snapshot_create_from_local_repo(o[0], o[1], args[0])
         else:
-            obj.snapshot_create_from_local_repo(o[0], o[1])
+            util.api.snapshot_create_from_local_repo(o[0], o[1])
 
     if opts.snapshot_create_by_pack_refs:
         o = opts.snapshot_create_by_pack_refs
         l = o[2].split(', ')
         if len(args) >= 1:
-            obj.snapshot_create_from_package_refs(
+            util.api.snapshot_create_from_package_refs(
                 o[0], o[1].split(', '), l, args[0])
         else:
-            obj.snapshot_create_from_package_refs(o[0], o[1].split(', '), l)
+            util.api.snapshot_create_from_package_refs(o[0], o[1].split(', '), l)
 
     if opts.snapshot_show_packages:
         o = opts.snapshot_show_packages
         if len(args) >= 3:
-            obj.snapshot_show_packages(o, args[0], args[1], args[2])
+            util.api.snapshot_show_packages(o, args[0], args[1], args[2])
         else:
-            obj.snapshot_show_packages(o)
+            util.api.snapshot_show_packages(o)
 
     if opts.snapshot_update:
         o = opts.snapshot_update
         if len(args) >= 1:
-            obj.snapshot_update(o[0], o[1], args[0])
+            util.api.snapshot_update(o[0], o[1], args[0])
 
     if opts.snapshot_list:
         if len(args) >= 1:
-            print json.dumps(obj.snapshot_list(args[0]), indent=2)
+            print json.dumps(util.api.snapshot_list(args[0]), indent=2)
         else:
-            print json.dumps(obj.snapshot_list(), indent=2)
+            print json.dumps(util.api.snapshot_list(), indent=2)
 
     if opts.snapshot_diff:
-        print json.dumps(obj.snapshot_diff(opts.snapshot_diff[0], opts.snapshot_diff[1]), indent=2)
+        print json.dumps(util.api.snapshot_diff(opts.snapshot_diff[0], opts.snapshot_diff[1]), indent=2)
 
     if opts.snapshot_delete:
         if len(args) >= 1:
             print args[0]
-            obj.snapshot_delete(opts.snapshot_delete, args[0])
+            util.api.snapshot_delete(opts.snapshot_delete, args[0])
         else:
-            obj.snapshot_delete(opts.snapshot_delete)
+            util.api.snapshot_delete(opts.snapshot_delete)
 
     if opts.publish_list:
-        obj.publish_list()
+        util.api.publish_list()
 
     if opts.publish:
         o = opts.publish
         if len(args) >= 5:
-            obj.publish(
+            util.api.publish(
                 o[0], o[1], o[2].split(', '), o[3], o[4].split(', '), args[1], args[2], args[3], args[4].split(', '))
         else:
-            obj.publish(o[0], o[1], o[2].split(', '), o[3], o[4].split(', '))
+            util.api.publish(o[0], o[1], o[2].split(', '), o[3], o[4].split(', '))
 
     if opts.publish_switch:
         o = opts.publish_switch
         if len(args) >= 2:
-            obj.publish_switch(o[0], o[1], o[2], args[0], args[1])
+            util.api.publish_switch(o[0], o[1], o[2], args[0], args[1])
         else:
-            obj.publish_switch(o[0], o[1], o[2])
+            util.api.publish_switch(o[0], o[1], o[2])
 
     if opts.publish_drop:
         o = opts.publish_drop
         if len(args) >= 1:
-            obj.publish_drop(o[0], o[1], args[0])
+            util.api.publish_drop(o[0], o[1], args[0])
         else:
-            obj.publish_drop(o[0], o[1])
+            util.api.publish_drop(o[0], o[1])
 
     if opts.package_show_by_key:
-        obj.package_show_by_key(opts.package_show_by_key)
+        util.api.package_show_by_key(opts.package_show_by_key)
 
     if opts.get_version:
-        obj.get_version()
+        util.api.get_version()
 
     if opts.create_config:
         # package prefix, reponame
