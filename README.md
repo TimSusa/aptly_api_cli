@@ -58,13 +58,14 @@ Creates standard config file (aptly-cli.conf) at $HOME directory.
 aptly_api_cli --create_config
 ```
 Please Note: You can configure the following keys:
-basic_url - the basic url
-port - the port
-prefixes_mirrors - prefixes for all mirrors that you have created
-repos_to_clean - reponames, which should be search for cleanout
-package_prefixes - package-prefixes, which should be search for cleanout
-save_last_pkg - Number of package-versions for each prefix, that should be kept
-save_last_snap - Number of snapshot-versions for each prefix, that should be kept
+
+- basic_url: the basic url
+- port: the port
+- prefixes_mirrors: prefixes for all mirrors that you have created
+- repos_to_clean: reponames, which should be search for cleanout
+- package_prefixes: package-prefixes, which should be search for cleanout
+- save_last_pkg: Number of package-versions for each prefix, that should be kept
+- save_last_snap: Number of snapshot-versions for each prefix, that should be kept
 
 See an working example (aptly-cli.conf):
 
