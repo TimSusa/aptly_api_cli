@@ -87,6 +87,12 @@ Returns the last n packages by reponame, prefix or optional postfix.
  aptly_api_cli --get_last_packages=REPO_NAME PREFIX NR_OF_VERS [POSTFIX]
  ```
 
+#### Clean last n packages by reponame and sorted by prefix
+Delete the last n packages by reponame, prefix or optional postfix.
+```
+  --clean_last_packages=REPO_NAME PREFIX NR_OF_VERS [POSTFIX]
+```
+
 #### Diff all mirror snapshots
 Sorts list of snapshots and makes a diff between the last two.
 ```
@@ -94,6 +100,34 @@ Sorts list of snapshots and makes a diff between the last two.
 
 ```
 
+#### Clean all mirror snapshots
+Cleans out snapshots, which were taken from mirrors (from config)
+```
+ aptly_api_cli --clean_mirrored_snapshots
+
+```
+
+## CI - Scripts
+
+```
+aptly-check-port-running.sh
+```
+
+```
+publish.sh
+```
+
+```
+publish-3rdParty-production.sh
+```
+
+```
+update-3rdparty-staging.sh
+```
+
+```
+decideForRelease.sh
+```
 
 ## Local Repos API
 Local repositories management via REST API.
