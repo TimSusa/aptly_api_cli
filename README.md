@@ -15,7 +15,7 @@ snapshots or packages, etc. pp
 You can make either use of the aptly_api_request.py as a starting point for your own application or just use the cli (aptly_api_cli.py)
 bundled with this repository to execute your requests via command line or run scripts, calling the cli, integrated into a CI Workflow.
 
-# Installation
+# Build
 
 ```
   mkvirtualenv aptly-cli
@@ -23,7 +23,7 @@ bundled with this repository to execute your requests via command line or run sc
   ./aptly-api-cli --help
 ```
 
-or
+# Installation
 
 ```
   python setup.py install
@@ -43,6 +43,13 @@ Show this help message and exit
 ```
 -h, --help
 ```
+
+### Build documentation
+```
+cd docs
+make html
+```
+
 
 ## Extensions API
 Tools and utilities integrating to your CI workflow.
