@@ -17,6 +17,25 @@ bundled with this repository to execute your requests via command line or run sc
 
 # Installation
 
+```
+  mkvirtualenv aptly-cli
+  pip install -r dev-requirements.txt
+  ./aptly-api-cli --help
+```
+
+or
+
+```
+  python setup.py install
+  aptly-cli --help
+```
+
+or get the apt-source updated and afterwards:
+
+```
+sudo apt-get install aptly aptly-cli
+```
+
 
 # Get started
 
