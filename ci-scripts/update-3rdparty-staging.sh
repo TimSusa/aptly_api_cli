@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+# This script starts the update chain beginning from staging.
+
 # If no argument is given, spit out help
 if [ -z "$1" ]; then
   echo "What does this script do?"

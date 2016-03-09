@@ -133,25 +133,32 @@ Cleans out snapshots, which were taken from mirrors (from config)
 
 ## CI - Scripts
 
+This script is called by other scripts, just to check if aptly server is alive.
 ```
 aptly-check-port-running.sh
 ```
 
+This script is called, whenever we release new software as debian package to staging or production repositories (No 3rd Party).
 ```
-publish.sh
-```
-
-```
-publish-3rdParty-production.sh
+publish.sh 'cluster-manager' 'unstable'
 ```
 
+This script starts the 3rdPartyMirror update chain beginning from staging:
 ```
 update-3rdparty-staging.sh
 ```
 
+This script decides, if the staging snapshot should also be published to production
 ```
 decideForRelease.sh
 ```
+
+This script is called from the above one, if there is new content to release.
+```
+publish-3rdParty-production.sh
+```
+
+
 
 ## Local Repos API
 Local repositories management via REST API.

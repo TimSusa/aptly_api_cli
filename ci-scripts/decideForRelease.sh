@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Decide, if the staging snapshot should also be published to production
+
 res=$(aptly-cli --diff_both_last_snapshots_mirrors)
 
 if [ "${res}" == "EMPTY"  ]; then

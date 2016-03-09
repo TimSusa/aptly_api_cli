@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-# get last line of curl response and cut out snapshotname
+# Called by decide-for-release.sh
+
+# cut out snapshotname
 LAST_SNAP=$(aptly-cli --get_last_snapshots "3rdparty-s3-repo" 1 "3rdparty-staging_snapshot")
 echo "This is the new snapshot: ${LAST_SNAP}"
 
