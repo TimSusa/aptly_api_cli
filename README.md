@@ -30,14 +30,11 @@ or
   aptly-cli --help
 ```
 
-or get the apt-source updated and afterwards:
-
-```
-sudo apt-get install aptly aptly-cli
-```
+or create a debian package (see debian folder) and install it, locally.
 
 
 # Get started
+Quickstart: Look into the ci-scripts folder to explore aptly-cli in action.
 
 # Command Line Options
 
