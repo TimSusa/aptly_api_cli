@@ -268,7 +268,7 @@ prefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n[general]\nrepos=\nstagin
                 print pack_prefix
                 self.clean_last_packages(repo_name, pack_prefix, 100)
 
-    def publish_switch_s3_3rd_party_production(self):
+    def publish_switch_3rdparty_production(self):
         """ publish_switch_s3_3rd_party_production
         Publish the latest 3rd party snapshot from staging to production, only if there is new content available.
         """
