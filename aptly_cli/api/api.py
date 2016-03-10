@@ -78,13 +78,17 @@ class AptlyApiRequests(object):
             cfg_file = None
         else:
             cfg_file = {
+                # general
                 'basic_url': config_file.get('general', 'basic_url'),
                 'port': config_file.get('general', 'port'),
                 'prefixes_mirrors': config_file.get('general', 'prefixes_mirrors'),
                 'save_last_snap': config_file.get('general', 'save_last_snap'),
                 'save_last_pkg': config_file.get('general', 'save_last_pkg'),
                 'repos_to_clean': config_file.get('general', 'repos_to_clean'),
-                'package_prefixes': config_file.get('general', 'package_prefixes')
+                'package_prefixes': config_file.get('general', 'package_prefixes'),
+                # 3rd party
+                'repos': config_file.get('3rd_party', 'repos'),
+                'staging_snap_pre_post': config_file.get('3rd_party', 'staging_snap_pre_post')
             }
         return cfg_file
 

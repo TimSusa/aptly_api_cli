@@ -212,6 +212,9 @@ def _get_parser_opts():
                       action='store_true',
                       help='Sorts list of snapshots and makes a diff between the last two.')
 
+    parser.add_option('--publish_switch_s3_3rd_party_production',
+                      action='store_true',
+                      help='Publish the last 3rd party staging snapshot to s3 production, if new content is available')
     return parser
 
 
@@ -225,7 +228,9 @@ def _execute_opts(opts, args, util):
         """
         def __init__(self):
             pass
-
+    #
+    # Basic API functionalities
+    #
     if opts.repo_list:
         resp = util.api.repo_list()
         print json.dumps(resp, indent=2)
@@ -396,6 +401,9 @@ def _execute_opts(opts, args, util):
         resp = util.api.get_version()
         print json.dumps(resp, indent=2)
 
+    #
+    # Extended functionalities
+    #
     if opts.create_config:
         # package prefix, reponame
         util.create_init_file()
@@ -455,6 +463,10 @@ def _execute_opts(opts, args, util):
             res = util.clean_last_packages(o[0], o[1], o[2], args[0])
         else:
             res = util.clean_last_packages(o[0], o[1], o[2])
+
+    if opts.publish_switch_s3_3rd_party_production:
+        # package prefix, reponame
+        util.publish_switch_s3_3rd_party_production()
 
 if __name__ == "__main__":
     sys.exit(main())

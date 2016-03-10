@@ -44,7 +44,8 @@ class Util(object):
             try:
                 conf = open(name, 'a')
                 conf.write(
-                    '[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\nsave_last_pkg=10\nprefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n')
+                    '[general]\nbasic_url=http://localhost\nport=:9003\nsave_last_snap=3\nsave_last_pkg=10\n \
+prefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n[general]\nrepos=\nstaging_snap_pre_post=')
                 conf.close()
 
             except:
@@ -158,6 +159,7 @@ class Util(object):
                 break
 
         print result
+        return result
 
     def list_all_repos_and_packages(self):
         """ list_all_repos_and_packages
@@ -265,3 +267,45 @@ class Util(object):
             for pack_prefix in pack_pref_list:
                 print pack_prefix
                 self.clean_last_packages(repo_name, pack_prefix, 100)
+
+    def publish_switch_s3_3rd_party_production(self):
+        """ publish_switch_s3_3rd_party_production
+        Publish the latest 3rd party snapshot from staging to production, only if there is new content available.
+        """
+        print "publish_switch_s3_3rd_party_production"
+
+        # Get Config
+        local_cfg = self.api.get_config_from_file()
+        if local_cfg['repos']:
+            s3_list = local_cfg['repos'].split(', ')
+        else:
+            print "Error: Prefix list is empty: please add s3 buckets to your configfile!"
+
+        if local_cfg['staging_snap_pre_post']:
+            prefix_postfix = local_cfg['staging_snap_pre_post'].split(', ')
+        else:
+            print "Error: Prefix list is empty: please add staging_snap_pre_post to your configfile!"
+
+        # Diff snapshots from mirrors
+        res = self.diff_both_last_snapshots_mirrors()
+
+        # Decide if it should be released to production
+        if res == "EMPTY":
+            print "New snapshot has no new packages. No need to release to production!"
+
+        else:
+            print "New packages were found...", res
+
+            # Get most actual snapshot from 3rdparty staging
+            last_snap = self.get_last_snapshots(prefix_postfix[0], 1, prefix_postfix[1])
+            print "This is the new snapshot: ", last_snap
+
+            # publish snapshots to production on s3
+            print ("Publish ", last_snap, s3_list[0])
+            self.api.publish_switch(s3_list[0], last_snap, "precise", "main", 0)
+
+            print ("Publish ", last_snap, s3_list[1])
+            self.api.publish_switch(s3_list[1], last_snap, "precise", "main", 0)
+
+            # clean out
+            self.clean_mirrored_snapshots()
