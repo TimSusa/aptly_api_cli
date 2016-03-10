@@ -75,6 +75,7 @@ Please Note: You can configure the following keys:
 See an working example (aptly-cli.conf):
 
 ```
+# aptly-cli config file
 [general]
 basic_url=http://localhost
 port=:9003
@@ -83,6 +84,12 @@ repos_to_clean=unstable-repo, stable-repo
 package_prefixes=cluster-manager, puppet-config, ingest-api, camus-etl, aptly-cli
 save_last_pkg=10
 save_last_snap=3
+
+[3rd_party]
+# 3rd party s3 buckets to publish switch to
+repos=3rdparty-eu-west-1, 3rdparty-us-east-1
+# Pre and postfix of the staging snapshots
+staging_snap_pre_post=3rdparty-s3-repo, 3rdparty-staging_snapshot
 ```
 
 
