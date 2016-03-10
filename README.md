@@ -139,6 +139,15 @@ Cleans out packages globally, which were taken from repo names (from config)
 
 ```
 
+#### Publish 3rd party staging snapshot to production
+Publish the last 3rd party staging snapshot to production (e.g. s3 bucket), only if new content is available. The taken snapshot
+stems from the script 'update-3rdparty-staging.sh'.
+
+```
+ aptly_api_cli --publish_switch_3rdparty_production
+
+```
+
 
 ## CI - Scripts
 
@@ -156,18 +165,6 @@ This script starts the 3rdPartyMirror update chain beginning from staging:
 ```
 update-3rdparty-staging.sh
 ```
-
-This script decides, if the staging snapshot should also be published to production
-```
-decideForRelease.sh
-```
-
-This script is called from the above one, if there is new content to release.
-```
-publish-3rdParty-production.sh
-```
-
-
 
 ## Local Repos API
 Local repositories management via REST API.
