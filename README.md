@@ -37,6 +37,34 @@ or create a debian package (see debian folder) and install it, locally.
 # Get started
 Quickstart: Look into the ci-scripts folder to explore aptly-cli in action.
 
+## How to configure aptly server on a CI with JENKINS?
+
+We use upstart: http://upstart.ubuntu.com/ to ensure, aptly server is running (here on Ubuntu 12.04).
+
+Therefore, please create a file: /etc/init/aptly.conf
+
+with content:
+
+```
+
+description "starting aptly"
+author "maxMuster@muster.de"
+
+start on runlevel [2345]
+
+stop on runlevel [!2345]
+
+setuid jenkins
+
+script
+    export AWS_ACCESS_KEY_ID="PUT_YOUR_AWS_CREDENTIAL_HERE"
+    export AWS_SECRET_ACCESS_KEY="PUT_YOUR_AWS_CREDENTIAL_HERE"
+
+    /usr/bin/aptly api serve -config=/var/lib/jenkins/.aptly.conf -listen=":9003"
+end script
+
+```
+
 # Command Line Options
 
 ## Help
