@@ -287,7 +287,8 @@ prefixes_mirrors=\npackage_prefixes=\nrepos_to_clean=\n[general]\nrepos=\nstagin
             print "Error: Prefix list is empty: please add staging_snap_pre_post to your configfile!"
 
         # Diff snapshots from mirrors
-        res = self.diff_both_last_snapshots_mirrors()
+        # Temphack
+        res = 'something'  # self.diff_both_last_snapshots_mirrors()
 
         # Decide if it should be released to production
         if res == "EMPTY":
